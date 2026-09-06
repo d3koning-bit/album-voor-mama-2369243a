@@ -1,0 +1,39 @@
+# De teksten van het album. Pas aan wat je wilt en draai daarna:
+#     python3 bouw.py
+#
+# Regels die met # beginnen worden genegeerd.
+
+# Kleine regel bovenaan de omslag, in hoofdletters.
+ondertitel = 7 september
+
+# De grote regel op de omslag.
+namen = Voor mama
+
+# De cursieve regel eronder.
+titel = een album van de afgelopen tijd
+
+# Wat er in het tabblad van de browser staat.
+tabtitel = Voor mama
+
+# De vraag aan de deur, en het antwoord dat past.
+# Meerdere goede antwoorden mogen, gescheiden door een komma.
+vraag = Een laatste vraag voor we opengaan: hoe heet de kat?
+sleutel = Skipper, skippertje
+
+# De tekst na de omslag. Enter voor een nieuwe regel.
+opening = Gefeliciteerd met je 60e verjaardag.
+  Ik heb wat foto's uitgezocht voor een album van de afgelopen tijd en er een fotoboek van gemaakt.
+  Ik hoop dat je ervan geniet!
+
+# Zinnetje onder je openingstekst, dat de weg wijst. Leeg laten mag.
+wegwijzer = Met de knoppen hieronder wissel je tussen de jaren en de plekken.
+
+# De tekst helemaal onderaan, na de laatste foto.
+slot = Op alles wat nog komt.
+
+# Geboortedatum, voor de leeftijd bij elk jaar. Leeg laten mag ook.
+geboortedatum = 1966-09-07
+
+# Foto achter de omslag, verdonkerd. Het nummer uit de contactvellen.
+# Leeg laten = geen foto, alleen letters.
+omslagfoto = 335

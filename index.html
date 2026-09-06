@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Voor mama</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --inkt:#f2efe9; --inkt-zacht:#a8a29a; --inkt-flauw:#6f6a63;
+    --grond:#121110; --grond-op:#1b1a18; --lijn:#2e2c29;
+    --goud:#c9a227; --goud-licht:#e8c95e; --roze:#c98b7a; --room:#efe6d2;
+    --serif:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--grond);color:var(--inkt);font-family:var(--sans);
+       font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  img{max-width:100%;display:block}
+  button{font-family:inherit;color:inherit;cursor:pointer}
+
+  #confetti{position:fixed;inset:0;z-index:150;pointer-events:none;display:none}
+  #confetti.aan{display:block}
+
+  /* ---------------- omslag ---------------- */
+  #omslag{position:fixed;inset:0;z-index:100;display:flex;align-items:center;
+          justify-content:center;background:var(--grond);padding:28px;
+          transition:opacity 1s ease, visibility 1s}
+  #omslag.weg{opacity:0;visibility:hidden}
+  #omslag.metfoto::before{content:"";position:absolute;inset:0;background-image:var(--omslagfoto);
+    background-size:cover;background-position:center;opacity:.26}
+  #omslag.metfoto::after{content:"";position:absolute;inset:0;background:
+    radial-gradient(ellipse 76% 62% at 50% 46%, rgba(18,17,16,.45) 0%, rgba(18,17,16,.93) 72%)}
+  .slinger-boven,.omslag-vak{position:relative;z-index:1}
+  .slinger-boven{position:absolute;top:0;left:0;right:0;pointer-events:none}
+  .omslag-vak{max-width:520px;width:100%;text-align:center;position:relative}
+  .omslag-lijn{width:54px;height:1px;background:var(--goud);margin:0 auto 26px;opacity:.8}
+  .omslag-boven{font-size:.72rem;letter-spacing:.42em;text-transform:uppercase;
+                color:var(--inkt-zacht);margin:0 0 18px}
+  .omslag-naam{font-family:var(--serif);font-size:clamp(2.9rem,12vw,5rem);
+               font-weight:300;line-height:1;margin:0 0 6px;letter-spacing:.01em}
+  .omslag-onder{font-family:var(--serif);font-style:italic;font-size:clamp(1.05rem,4vw,1.4rem);
+                color:var(--inkt-zacht);margin:0 0 22px;font-weight:300}
+
+  /* ---------------- taart ---------------- */
+  .taart{width:min(252px,66vw);margin:0 auto 24px}
+  .taart svg{width:100%;height:auto;overflow:visible}
+  .vlam{transform-origin:50% 100%;animation:flikker 1.15s ease-in-out infinite alternate;
+        animation-delay:calc(var(--i) * .17s)}
+  @keyframes flikker{
+    from{transform:scale(1) translateY(0);opacity:.92}
+    to{transform:scale(1.18,.88) translateY(-.6px);opacity:1}
+  }
+  .gloed{transform-origin:50% 100%;animation:gloeien 1.15s ease-in-out infinite alternate;
+         animation-delay:calc(var(--i) * .17s)}
+  @keyframes gloeien{from{opacity:.16}to{opacity:.34}}
+  .taart.blazen .vlam{animation:zwiepen .5s ease-in-out}
+  @keyframes zwiepen{
+    0%,100%{transform:rotate(0) scale(1)}
+    30%{transform:rotate(-26deg) scale(.8,1.25)}
+    65%{transform:rotate(16deg) scale(.9,1.15)}
+  }
+  .taart.uit .vlam,.taart.uit .gloed{animation:none;opacity:0;transform:scale(.2) translateY(3px);
+        transition:opacity .3s ease calc(var(--i) * .09s), transform .3s ease calc(var(--i) * .09s)}
+  .rook{opacity:0}
+  .taart.uit .rook{animation:rookop 1.5s ease-out calc(.25s + var(--i) * .09s) forwards}
+  @keyframes rookop{
+    0%{opacity:0;transform:translateY(0) scaleX(1)}
+    25%{opacity:.5}
+    100%{opacity:0;transform:translateY(-24px) scaleX(1.8)}
+  }
+  .zestig{font-family:var(--serif);font-size:31px;font-weight:500;fill:#a8543c;
+          letter-spacing:.06em}
+
+  .vraag{font-size:.95rem;color:var(--inkt-zacht);margin:0 0 16px;line-height:1.6}
+  .sleutel{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .sleutel input{width:132px;padding:13px 16px;font-size:1.15rem;text-align:center;
+                 background:transparent;border:1px solid var(--lijn);border-radius:2px;
+                 color:var(--inkt);font-family:var(--sans);outline:none;transition:border-color .3s}
+  .sleutel input:focus{border-color:var(--goud)}
+  .sleutel button{padding:13px 26px;font-size:.78rem;letter-spacing:.17em;text-transform:uppercase;
+                  background:transparent;border:1px solid var(--lijn);border-radius:2px;
+                  transition:border-color .3s,background .3s}
+  .sleutel button:hover{border-color:var(--goud);background:rgba(201,162,39,.09)}
+  .mis{color:#c96b5c;font-size:.85rem;height:1.2em;margin-top:14px;opacity:0;transition:opacity .3s}
+  .mis.zien{opacity:1}
+
+  /* ---------------- opening ---------------- */
+  #album{opacity:0;transition:opacity 1s ease .3s}
+  #album.open{opacity:1}
+  .opening{max-width:660px;margin:0 auto;padding:19vh 28px 15vh;text-align:center}
+  .opening p{font-family:var(--serif);font-size:clamp(1.25rem,3.6vw,1.7rem);line-height:1.75;
+             color:var(--inkt);margin:0 0 1.1em;font-weight:300}
+
+  /* ---------------- balk ---------------- */
+  .balk{position:sticky;top:0;z-index:40;background:rgba(18,17,16,.9);
+        backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+        border-bottom:1px solid var(--lijn)}
+  .balk-in{max-width:1500px;margin:0 auto;padding:13px 22px;display:flex;
+           align-items:center;justify-content:space-between;gap:16px}
+  .balk-merk{font-family:var(--serif);font-size:1.02rem;color:var(--inkt-zacht);
+             letter-spacing:.06em;white-space:nowrap}
+  .knoppen{display:flex;gap:6px;background:var(--grond-op);padding:3px;border-radius:2px}
+  .knoppen button{padding:8px 17px;font-size:.71rem;letter-spacing:.15em;text-transform:uppercase;
+                  background:transparent;border:0;border-radius:2px;color:var(--inkt-flauw);
+                  transition:color .25s,background .25s;white-space:nowrap}
+  .knoppen button.aan{background:rgba(255,255,255,.07);color:var(--inkt)}
+  @media(max-width:560px){
+    .balk-in{justify-content:center;padding:10px 14px}
+    .balk-merk{display:none}
+    .knoppen button{padding:8px 14px;font-size:.68rem;letter-spacing:.1em}
+  }
+
+  /* springen naar een hoofdstuk */
+  .sprong{max-width:1500px;margin:0 auto;padding:0 22px 11px;display:flex;gap:3px;
+          overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .sprong::-webkit-scrollbar{display:none}
+  .sprong button{flex:none;padding:5px 11px;font-size:.71rem;letter-spacing:.1em;
+                 background:transparent;border:0;color:var(--inkt-flauw);white-space:nowrap;
+                 border-radius:2px;transition:color .25s,background .25s}
+  .sprong button:hover{color:var(--inkt);background:rgba(255,255,255,.05)}
+  .sprong button.hier{color:var(--goud)}
+  @media(max-width:560px){.sprong{padding:0 10px 9px}}
+
+  /* wegwijzer onder de opening */
+  .opening p.wegwijzer{font-family:var(--sans);font-size:.82rem;font-style:normal;
+             letter-spacing:.05em;line-height:1.6;color:var(--inkt-flauw);margin:3.4em 0 0}
+  .knoppen.wenk{animation:wenken 1.5s ease-in-out 3}
+  @keyframes wenken{
+    0%,100%{box-shadow:0 0 0 0 rgba(201,162,39,0)}
+    50%{box-shadow:0 0 0 3px rgba(201,162,39,.34)}
+  }
+
+  /* klein tekentje per jaar */
+  .teken{width:27px;height:27px;flex:none;opacity:.82}
+  .teken svg{width:100%;height:100%;display:block;overflow:visible}
+  @keyframes zweven{from{transform:translateY(1.5px)}to{transform:translateY(-2.5px)}}
+  @keyframes fonkelen{0%,100%{transform:scale(.82);opacity:.5}50%{transform:scale(1.1);opacity:1}}
+  @keyframes wuiven{from{transform:rotate(-11deg)}to{transform:rotate(11deg)}}
+  @keyframes kloppen{0%,100%{transform:scale(1)}22%{transform:scale(1.2)}44%{transform:scale(1)}}
+  @keyframes draaien{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+  @keyframes dalen{from{transform:translateY(-5px);opacity:0}
+                   25%{opacity:1} to{transform:translateY(6px);opacity:0}}
+  @keyframes stijgen{from{transform:translateY(3px);opacity:0}
+                     35%{opacity:.95} to{transform:translateY(-6px);opacity:0}}
+  @keyframes wiebelen{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+  @keyframes ademen{0%,100%{opacity:.55}50%{opacity:1}}
+  .a-zweven{animation:zweven 2.4s ease-in-out infinite alternate;transform-origin:50% 100%}
+  .a-fonkelen{animation:fonkelen 2.2s ease-in-out infinite;transform-origin:50% 50%}
+  .a-wuiven{animation:wuiven 2.6s ease-in-out infinite alternate;transform-origin:50% 0}
+  .a-kloppen{animation:kloppen 2.6s ease-in-out infinite;transform-origin:50% 55%}
+  .a-draaien{animation:draaien 11s linear infinite;transform-origin:50% 50%}
+  .a-dalen{animation:dalen 2.8s ease-in infinite;animation-delay:calc(var(--i) * .5s)}
+  .a-stijgen{animation:stijgen 2.6s ease-out infinite;animation-delay:calc(var(--i) * .45s)}
+  .a-wiebelen{animation:wiebelen 3.4s ease-in-out infinite;transform-origin:50% 80%}
+  .a-ademen{animation:ademen 2.6s ease-in-out infinite}
+
+  /* ---------------- hoofdstukken ---------------- */
+  .hoofdstuk{max-width:1500px;margin:0 auto;padding:0 22px;scroll-margin-top:104px}
+  .kop{display:flex;align-items:center;gap:18px;padding:74px 0 26px}
+  .kop h2{font-family:var(--serif);font-size:clamp(1.75rem,6.5vw,3.3rem);font-weight:300;
+          margin:0;letter-spacing:.01em;white-space:nowrap;min-width:0;line-height:1.1}
+  .kop .vlaggen{flex:1;min-width:24px;height:26px;opacity:.62}
+  .kop .vlaggen svg{width:100%;height:100%;display:block}
+  .kop .telling{font-size:.72rem;letter-spacing:.19em;color:var(--inkt-flauw);
+                text-transform:uppercase;white-space:nowrap}
+  .kop .leeftijd{color:var(--goud);opacity:.85}
+  @media(max-width:560px){
+    .kop{flex-wrap:wrap;gap:10px;padding:52px 0 18px}
+    .kop h2{white-space:normal}
+    .kop .vlaggen{min-width:20px}
+  }
+
+  .raster{columns:4;column-gap:12px}
+  @media(max-width:1180px){.raster{columns:3}}
+  @media(max-width:720px){.raster{columns:2;column-gap:8px}}
+  .kaart{break-inside:avoid;margin:0 0 12px;position:relative;background:var(--grond-op);
+         cursor:zoom-in;overflow:hidden;border-radius:1px}
+  @media(max-width:720px){.kaart{margin-bottom:8px}}
+  .kaart img{width:100%;height:auto;transition:transform .75s cubic-bezier(.2,.7,.3,1),opacity .6s;opacity:0}
+  .kaart img.geladen{opacity:1}
+  .kaart:hover img{transform:scale(1.035)}
+  .kaart .datum{position:absolute;left:0;right:0;bottom:0;padding:26px 12px 9px;
+                font-size:.68rem;letter-spacing:.12em;color:#fff;
+                background:linear-gradient(transparent,rgba(0,0,0,.7));
+                opacity:0;transition:opacity .35s;pointer-events:none}
+  .kaart:hover .datum{opacity:.92}
+
+  .slot{text-align:center;padding:15vh 28px 12vh;position:relative}
+  .slot .slingertje{width:min(320px,70vw);margin:0 auto 40px;opacity:.7}
+  .slot p{font-family:var(--serif);font-style:italic;font-size:1.45rem;
+          color:var(--inkt-zacht);margin:0}
+  .slot .lijn{width:54px;height:1px;background:var(--lijn);margin:34px auto 0}
+
+  /* ---------------- lichtbak ---------------- */
+  #lichtbak{position:fixed;inset:0;z-index:200;background:rgba(9,8,8,.97);
+            display:none;align-items:center;justify-content:center;touch-action:none}
+  #lichtbak.aan{display:flex}
+  #lichtbak img{max-width:94vw;max-height:88vh;width:auto;height:auto;object-fit:contain;
+                user-select:none;-webkit-user-drag:none}
+  .lb-info{position:absolute;bottom:max(18px,env(safe-area-inset-bottom));left:0;right:0;
+           text-align:center;font-size:.74rem;letter-spacing:.15em;color:var(--inkt-flauw)}
+  .lb-knop{position:absolute;background:transparent;border:0;color:var(--inkt-zacht);
+           font-size:2.4rem;line-height:1;padding:20px;transition:color .25s;user-select:none}
+  .lb-knop:hover{color:var(--inkt)}
+  #lb-vorige{left:max(4px,env(safe-area-inset-left))}
+  #lb-volgende{right:max(4px,env(safe-area-inset-right))}
+  #lb-dicht{top:max(6px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));font-size:1.9rem}
+  @media(max-width:720px){.lb-knop{font-size:1.9rem;padding:14px}}
+
+  @media(prefers-reduced-motion:reduce){
+    *{transition:none!important;animation:none!important}
+    .taart.uit .vlam,.taart.uit .gloed{opacity:0}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div id="omslag" data-foto="fotos/335-photo-2025-05-02-14-03-15.jpg">
+  <div class="slinger-boven" id="slinger-boven"></div>
+  <div class="omslag-vak">
+    <div class="omslag-lijn"></div>
+    <p class="omslag-boven">7 september</p>
+    <h1 class="omslag-naam">Voor mama</h1>
+    <p class="omslag-onder">een album van de afgelopen tijd</p>
+
+    <div class="taart" id="taart">
+      <svg viewBox="0 0 200 136" role="img" aria-label="Een taart met kaarsjes">
+        <g id="kaarsjes"></g>
+        <!-- bovenste laag -->
+        <path d="M44 66 h112 a5 5 0 0 1 5 5 v18 h-122 v-18 a5 5 0 0 1 5 -5 z" fill="#efe6d2"/>
+        <path d="M39 66 q9 -9 18 0 q9 -9 18 0 q9 -9 18 0 q9 -9 18 0 q9 -9 18 0 q9 -9 18 0 v6 h-108 z"
+              fill="#c98b7a"/>
+        <!-- onderste laag -->
+        <rect x="33" y="89" width="134" height="30" rx="6" fill="#e3d6bd"/>
+        <rect x="33" y="89" width="134" height="7" fill="#c98b7a" opacity=".55"/>
+        <text class="zestig" x="100" y="112" text-anchor="middle">60</text>
+        <!-- schaal -->
+        <ellipse cx="100" cy="121" rx="80" ry="6" fill="#2e2c29"/>
+        <ellipse cx="100" cy="119" rx="74" ry="4.5" fill="#3a3733"/>
+      </svg>
+    </div>
+
+    <p class="vraag">Een laatste vraag voor we opengaan: hoe heet de kat?</p>
+    <form class="sleutel" id="sleutelform" autocomplete="off">
+      <input id="antwoord" type="text" inputmode="numeric" aria-label="Antwoord" autocomplete="off">
+      <button type="submit">Openmaken</button>
+    </form>
+    <div class="mis" id="mis">Nog niet helemaal. Probeer het nog eens.</div>
+  </div>
+</div>
+
+<div id="album" aria-hidden="true">
+  <div class="opening" id="opening"></div>
+
+  <div class="balk">
+    <div class="balk-in">
+      <span class="balk-merk">Voor mama &middot; 7 september</span>
+      <div class="knoppen">
+        <button id="knop-jaar" class="aan">Op jaar</button>
+        <button id="knop-plek">Op plek</button>
+      </div>
+    </div>
+    <nav class="sprong" id="sprong" aria-label="Ga naar"></nav>
+  </div>
+
+  <main id="inhoud"></main>
+
+  <div class="slot" id="slot">
+    <div class="slingertje" id="slingertje"></div>
+    <p>Op alles wat nog komt.</p>
+    <div class="lijn"></div>
+  </div>
+</div>
+
+<div id="lichtbak" role="dialog" aria-modal="true">
+  <button class="lb-knop" id="lb-dicht" aria-label="Sluiten">&times;</button>
+  <button class="lb-knop" id="lb-vorige" aria-label="Vorige">&#8249;</button>
+  <img id="lb-foto" alt="">
+  <button class="lb-knop" id="lb-volgende" aria-label="Volgende">&#8250;</button>
+  <div class="lb-info" id="lb-info"></div>
+</div>
+
+<script>
+const FOTOS = [{"groot":"fotos/001-5cd00e69fe1da7bcabf6328705a5b992.jpg","klein":"fotos/001-5cd00e69fe1da7bcabf6328705a5b992-k.jpg","breedte":800,"hoogte":1067,"datum":"2015-05-02T15:33:58","jaar":2015,"plek":"Amerika"},{"groot":"fotos/002-6e1a403ce58031ddd4b9a3fcd1a6c411.jpg","klein":"fotos/002-6e1a403ce58031ddd4b9a3fcd1a6c411-k.jpg","breedte":800,"hoogte":1067,"datum":"2015-05-02T15:34:01","jaar":2015,"plek":"Amerika"},{"groot":"fotos/003-d6492848a81055e3e3ec962b28936519.jpg","klein":"fotos/003-d6492848a81055e3e3ec962b28936519-k.jpg","breedte":800,"hoogte":598,"datum":"2015-05-22T16:36:42","jaar":2015,"plek":"Feesten & mijlpalen"},{"groot":"fotos/004-a3c7c7762b9e1089b33b6811a4925f0e.jpg","klein":"fotos/004-a3c7c7762b9e1089b33b6811a4925f0e-k.jpg","breedte":774,"hoogte":1032,"datum":"2015-07-05T14:49:51","jaar":2015,"plek":"Onderweg in Nederland"},{"groot":"fotos/005-9ba94b73aaefbcb4f66aea355c392740.jpg","klein":"fotos/005-9ba94b73aaefbcb4f66aea355c392740-k.jpg","breedte":800,"hoogte":600,"datum":"2015-08-01T18:00:38","jaar":2015,"plek":"Op het water"},{"groot":"fotos/006-6f4e47e86fbe21ba857fee7e93a68722.jpg","klein":"fotos/006-6f4e47e86fbe21ba857fee7e93a68722-k.jpg","breedte":800,"hoogte":1067,"datum":"2015-08-01T18:02:14","jaar":2015,"plek":"Op het water"},{"groot":"fotos/007-c7f05c802e05b2d3f4bb39c8acb519af.jpg","klein":"fotos/007-c7f05c802e05b2d3f4bb39c8acb519af-k.jpg","breedte":800,"hoogte":600,"datum":"2015-08-01T18:02:18","jaar":2015,"plek":"Op het water"},{"groot":"fotos/008-4a640d3f5291cd8983bd5459beec5e65.jpg","klein":"fotos/008-4a640d3f5291cd8983bd5459beec5e65-k.jpg","breedte":800,"hoogte":1067,"datum":"2015-08-01T18:02:20","jaar":2015,"plek":"Op het water"},{"groot":"fotos/009-6ac21ec30d2fb314ea350505f29bb5b6.jpg","klein":"fotos/009-6ac21ec30d2fb314ea350505f29bb5b6-k.jpg","breedte":800,"hoogte":600,"datum":"2015-08-01T18:03:34","jaar":2015,"plek":"Op het water"},{"groot":"fotos/010-e56eec49903ea7031118c10383adc0a3.jpg","klein":"fotos/010-e56eec49903ea7031118c10383adc0a3-k.jpg","breedte":800,"hoogte":600,"datum":"2015-10-20T17:01:05","jaar":2015,"plek":"Amerika"},{"groot":"fotos/011-08dc1f7d2874b077b4de752c6bd6f3b1.jpg","klein":"fotos/011-08dc1f7d2874b077b4de752c6bd6f3b1-k.jpg","breedte":800,"hoogte":1067,"datum":"2015-10-21T16:17:08","jaar":2015,"plek":"Amerika"},{"groot":"fotos/012-70db0649e2c6d2c857547a7f05d0f7c7.jpg","klein":"fotos/012-70db0649e2c6d2c857547a7f05d0f7c7-k.jpg","breedte":800,"hoogte":1067,"datum":"2015-10-21T16:17:12","jaar":2015,"plek":"Amerika"},{"groot":"fotos/013-2494cf3d8f1f413cbf9d10617d52bce7.jpg","klein":"fotos/013-2494cf3d8f1f413cbf9d10617d52bce7-k.jpg","breedte":800,"hoogte":1071,"datum":"2015-10-22T16:39:57","jaar":2015,"plek":"Amerika"},{"groot":"fotos/014-c5758e1c906c19d058ee369f0c2bb504.jpg","klein":"fotos/014-c5758e1c906c19d058ee369f0c2bb504-k.jpg","breedte":800,"hoogte":1071,"datum":"2015-10-25T16:20:06","jaar":2015,"plek":"Amerika"},{"groot":"fotos/015-cb2c30df1b512e94464aec6066452fda.jpg","klein":"fotos/015-cb2c30df1b512e94464aec6066452fda-k.jpg","breedte":800,"hoogte":1067,"datum":"2015-10-25T16:20:08","jaar":2015,"plek":"Amerika"},{"groot":"fotos/016-b2f895fc86094ddcd9af593fbdaeac37.jpg","klein":"fotos/016-b2f895fc86094ddcd9af593fbdaeac37-k.jpg","breedte":800,"hoogte":1067,"datum":"2016-06-25T11:32:05","jaar":2016,"plek":"Feesten & mijlpalen"},{"groot":"fotos/017-827bfebe4c0f695d24e5f7d04888f021.jpg","klein":"fotos/017-827bfebe4c0f695d24e5f7d04888f021-k.jpg","breedte":800,"hoogte":1067,"datum":"2016-06-25T11:32:19","jaar":2016,"plek":"Feesten & mijlpalen"},{"groot":"fotos/018-c866927716e9315a0af164f9aa11ea39.jpg","klein":"fotos/018-c866927716e9315a0af164f9aa11ea39-k.jpg","breedte":800,"hoogte":800,"datum":"2016-07-03T11:41:08","jaar":2016,"plek":"Feesten & mijlpalen"},{"groot":"fotos/019-36e07bfe3bb2663a0367a45c6b3fdd96.jpg","klein":"fotos/019-36e07bfe3bb2663a0367a45c6b3fdd96-k.jpg","breedte":800,"hoogte":1067,"datum":"2016-07-27T10:20:42","jaar":2016,"plek":"Thailand"},{"groot":"fotos/020-3c79a9d19b2d616a35bf7dbec7eb7033.jpg","klein":"fotos/020-3c79a9d19b2d616a35bf7dbec7eb7033-k.jpg","breedte":800,"hoogte":600,"datum":"2016-07-27T10:20:42","jaar":2016,"plek":"Thailand"},{"groot":"fotos/021-aa69049115c182b1871b465f7c80bd61.jpg","klein":"fotos/021-aa69049115c182b1871b465f7c80bd61-k.jpg","breedte":800,"hoogte":800,"datum":"2016-07-27T10:20:42","jaar":2016,"plek":"Thailand"},{"groot":"fotos/022-74448bb3d6edb6fc059b117733f59927.jpg","klein":"fotos/022-74448bb3d6edb6fc059b117733f59927-k.jpg","breedte":800,"hoogte":600,"datum":"2016-08-08T13:27:41","jaar":2016,"plek":"Op het water"},{"groot":"fotos/023-a200655fe0ba4b1e7d2f249e5727b190.jpg","klein":"fotos/023-a200655fe0ba4b1e7d2f249e5727b190-k.jpg","breedte":800,"hoogte":1067,"datum":"2016-09-10T15:12:44","jaar":2016,"plek":"Feesten & mijlpalen"},{"groot":"fotos/024-409919c5-70ea-4db3-be91-ba2aec2beedc.jpg","klein":"fotos/024-409919c5-70ea-4db3-be91-ba2aec2beedc-k.jpg","breedte":800,"hoogte":600,"datum":"2016-10-23T19:00:27","jaar":2016,"plek":"Onderweg in Nederland"},{"groot":"fotos/025-0c5c99fb-27b4-4089-a66d-9f0d5691857a.jpg","klein":"fotos/025-0c5c99fb-27b4-4089-a66d-9f0d5691857a-k.jpg","breedte":800,"hoogte":1071,"datum":"2016-11-29T17:20:05","jaar":2016,"plek":"Onderweg in Nederland"},{"groot":"fotos/026-36b3e77f-aa6c-4dcd-be70-698b0872ac43.jpg","klein":"fotos/026-36b3e77f-aa6c-4dcd-be70-698b0872ac43-k.jpg","breedte":800,"hoogte":1067,"datum":"2016-12-29T18:04:40","jaar":2016,"plek":"Feesten & mijlpalen"},{"groot":"fotos/027-c1e6842e-865c-4536-a78f-4f242e5f89ff.jpg","klein":"fotos/027-c1e6842e-865c-4536-a78f-4f242e5f89ff-k.jpg","breedte":800,"hoogte":600,"datum":"2016-12-29T18:04:41","jaar":2016,"plek":"Feesten & mijlpalen"},{"groot":"fotos/028-d9d9e01b-b477-4b14-994b-891723866a5a.jpg","klein":"fotos/028-d9d9e01b-b477-4b14-994b-891723866a5a-k.jpg","breedte":800,"hoogte":600,"datum":"2017-04-11T08:45:27","jaar":2017,"plek":"Thuis"},{"groot":"fotos/029-8b7535fd-a3b0-4fca-b857-d35b47ff3aa2.jpg","klein":"fotos/029-8b7535fd-a3b0-4fca-b857-d35b47ff3aa2-k.jpg","breedte":800,"hoogte":600,"datum":"2017-05-18T14:02:50","jaar":2017,"plek":"Feesten & mijlpalen"},{"groot":"fotos/030-d935776d-3cdf-47b3-bbc2-138620375675.jpg","klein":"fotos/030-d935776d-3cdf-47b3-bbc2-138620375675-k.jpg","breedte":800,"hoogte":600,"datum":"2017-06-09T20:16:06","jaar":2017,"plek":"Onderweg in Nederland"},{"groot":"fotos/031-79c1d5a1-d3cd-4142-89cc-57e31f010b56.jpg","klein":"fotos/031-79c1d5a1-d3cd-4142-89cc-57e31f010b56-k.jpg","breedte":800,"hoogte":600,"datum":"2017-07-14T03:59:56","jaar":2017,"plek":"Amerika"},{"groot":"fotos/032-398781cb-9c6d-4ac4-ae9d-788fd53422e3.jpg","klein":"fotos/032-398781cb-9c6d-4ac4-ae9d-788fd53422e3-k.jpg","breedte":800,"hoogte":600,"datum":"2017-07-14T03:59:59","jaar":2017,"plek":"Amerika"},{"groot":"fotos/033-760e8517-b87c-42e7-840f-292724398b5b.jpg","klein":"fotos/033-760e8517-b87c-42e7-840f-292724398b5b-k.jpg","breedte":800,"hoogte":600,"datum":"2017-07-17T03:33:07","jaar":2017,"plek":"Amerika"},{"groot":"fotos/034-539906f6-c4d6-4f58-888b-664c99a94243.jpg","klein":"fotos/034-539906f6-c4d6-4f58-888b-664c99a94243-k.jpg","breedte":800,"hoogte":1067,"datum":"2017-07-17T03:33:56","jaar":2017,"plek":"Amerika"},{"groot":"fotos/035-c6517d15-c339-4e38-8c30-5d9975de549c.jpg","klein":"fotos/035-c6517d15-c339-4e38-8c30-5d9975de549c-k.jpg","breedte":800,"hoogte":600,"datum":"2017-07-18T03:36:02","jaar":2017,"plek":"Amerika"},{"groot":"fotos/036-04f4403e-210e-45c5-9f7d-6ac954cbbb89.jpg","klein":"fotos/036-04f4403e-210e-45c5-9f7d-6ac954cbbb89-k.jpg","breedte":800,"hoogte":600,"datum":"2017-07-18T03:36:03","jaar":2017,"plek":"Amerika"},{"groot":"fotos/037-16dfb7ee-ac35-40dc-989d-80f2e3457c23.jpg","klein":"fotos/037-16dfb7ee-ac35-40dc-989d-80f2e3457c23-k.jpg","breedte":800,"hoogte":1067,"datum":"2017-07-24T00:55:11","jaar":2017,"plek":"Amerika"},{"groot":"fotos/038-234cbc93-3201-4273-b22e-cfcaad8f03f0.jpg","klein":"fotos/038-234cbc93-3201-4273-b22e-cfcaad8f03f0-k.jpg","breedte":800,"hoogte":600,"datum":"2017-07-24T00:55:13","jaar":2017,"plek":"Amerika"},{"groot":"fotos/039-de29076b-1077-4673-bfc5-3d15568a2bff.jpg","klein":"fotos/039-de29076b-1077-4673-bfc5-3d15568a2bff-k.jpg","breedte":800,"hoogte":600,"datum":"2017-07-24T00:55:14","jaar":2017,"plek":"Amerika"},{"groot":"fotos/040-photo-2017-07-25-06-13-30.jpg","klein":"fotos/040-photo-2017-07-25-06-13-30-k.jpg","breedte":800,"hoogte":600,"datum":"2017-07-25T06:13:30","jaar":2017,"plek":"Amerika"},{"groot":"fotos/041-photo-2017-07-30-14-49-42.jpg","klein":"fotos/041-photo-2017-07-30-14-49-42-k.jpg","breedte":800,"hoogte":600,"datum":"2017-07-30T14:49:42","jaar":2017,"plek":"Amerika"},{"groot":"fotos/042-photo-2017-07-30-14-49-44.jpg","klein":"fotos/042-photo-2017-07-30-14-49-44-k.jpg","breedte":800,"hoogte":1067,"datum":"2017-07-30T14:49:44","jaar":2017,"plek":"Amerika"},{"groot":"fotos/043-photo-2017-07-30-14-49-45.jpg","klein":"fotos/043-photo-2017-07-30-14-49-45-k.jpg","breedte":800,"hoogte":1067,"datum":"2017-07-30T14:49:45","jaar":2017,"plek":"Amerika"},{"groot":"fotos/044-photo-2017-07-30-14-49-47.jpg","klein":"fotos/044-photo-2017-07-30-14-49-47-k.jpg","breedte":800,"hoogte":600,"datum":"2017-07-30T14:49:47","jaar":2017,"plek":"Amerika"},{"groot":"fotos/045-photo-2017-07-30-14-49-48.jpg","klein":"fotos/045-photo-2017-07-30-14-49-48-k.jpg","breedte":800,"hoogte":1067,"datum":"2017-07-30T14:49:48","jaar":2017,"plek":"Amerika"},{"groot":"fotos/046-photo-2017-07-30-14-49-49.jpg","klein":"fotos/046-photo-2017-07-30-14-49-49-k.jpg","breedte":800,"hoogte":600,"datum":"2017-07-30T14:49:49","jaar":2017,"plek":"Amerika"},{"groot":"fotos/047-b5acce03-eb93-4cfe-93b3-e85bddc12262.jpg","klein":"fotos/047-b5acce03-eb93-4cfe-93b3-e85bddc12262-k.jpg","breedte":800,"hoogte":1067,"datum":"2017-08-04T20:49:25","jaar":2017,"plek":"Amerika"},{"groot":"fotos/048-photo-2017-08-04-22-49-25.jpg","klein":"fotos/048-photo-2017-08-04-22-49-25-k.jpg","breedte":800,"hoogte":1067,"datum":"2017-08-04T22:49:25","jaar":2017,"plek":"Amerika"},{"groot":"fotos/049-3a1a0cf8-243b-44ad-a619-5efef70e2753.jpg","klein":"fotos/049-3a1a0cf8-243b-44ad-a619-5efef70e2753-k.jpg","breedte":800,"hoogte":600,"datum":"2017-10-08T23:02:08","jaar":2017,"plek":"Onderweg in Nederland"},{"groot":"fotos/050-122e555d-5d7c-4725-ad4d-45bdfc5d8367.jpg","klein":"fotos/050-122e555d-5d7c-4725-ad4d-45bdfc5d8367-k.jpg","breedte":800,"hoogte":1424,"datum":"2017-11-19T13:33:41","jaar":2017,"plek":"Thuis"},{"groot":"fotos/051-0586a4e5-9b28-4081-8a6b-5c58b7fb9b77.jpg","klein":"fotos/051-0586a4e5-9b28-4081-8a6b-5c58b7fb9b77-k.jpg","breedte":800,"hoogte":600,"datum":"2017-12-10T17:12:43","jaar":2017,"plek":"Wandelen & buiten"},{"groot":"fotos/052-c8c3a505-a378-4e4c-9c50-ba8c950c1051.jpg","klein":"fotos/052-c8c3a505-a378-4e4c-9c50-ba8c950c1051-k.jpg","breedte":800,"hoogte":600,"datum":"2018-03-03T10:23:57","jaar":2018,"plek":"Onderweg in Nederland"},{"groot":"fotos/053-fbf1fbf2-e13c-4d97-9150-6f107f04e4dd.jpg","klein":"fotos/053-fbf1fbf2-e13c-4d97-9150-6f107f04e4dd-k.jpg","breedte":800,"hoogte":600,"datum":"2018-03-03T10:23:58","jaar":2018,"plek":"Onderweg in Nederland"},{"groot":"fotos/054-photo-2018-03-03-11-23-58-2.jpg","klein":"fotos/054-photo-2018-03-03-11-23-58-2-k.jpg","breedte":800,"hoogte":600,"datum":"2018-03-03T11:23:58","jaar":2018,"plek":"Feesten & mijlpalen"},{"groot":"fotos/055-photo-2018-03-03-11-23-58.jpg","klein":"fotos/055-photo-2018-03-03-11-23-58-k.jpg","breedte":800,"hoogte":600,"datum":"2018-03-03T11:23:58","jaar":2018,"plek":"Feesten & mijlpalen"},{"groot":"fotos/056-0bc5c2ee-5791-4d12-8df7-d00986386e4f.jpg","klein":"fotos/056-0bc5c2ee-5791-4d12-8df7-d00986386e4f-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-03-20T09:17:41","jaar":2018,"plek":"Feesten & mijlpalen"},{"groot":"fotos/057-photo-2018-03-20-10-17-41.jpg","klein":"fotos/057-photo-2018-03-20-10-17-41-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-03-20T10:17:41","jaar":2018,"plek":"Feesten & mijlpalen"},{"groot":"fotos/058-photo-2018-03-20-10-17-42-2.jpg","klein":"fotos/058-photo-2018-03-20-10-17-42-2-k.jpg","breedte":800,"hoogte":600,"datum":"2018-03-20T10:17:42","jaar":2018,"plek":"Feesten & mijlpalen"},{"groot":"fotos/059-photo-2018-03-20-10-17-42.jpg","klein":"fotos/059-photo-2018-03-20-10-17-42-k.jpg","breedte":800,"hoogte":600,"datum":"2018-03-20T10:17:42","jaar":2018,"plek":"Feesten & mijlpalen"},{"groot":"fotos/060-af7080c5-1801-45d4-a45a-67bf05e6cf31.jpg","klein":"fotos/060-af7080c5-1801-45d4-a45a-67bf05e6cf31-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-03-20T11:07:17","jaar":2018,"plek":"Feesten & mijlpalen"},{"groot":"fotos/061-photo-2018-03-20-12-07-18.jpg","klein":"fotos/061-photo-2018-03-20-12-07-18-k.jpg","breedte":800,"hoogte":600,"datum":"2018-03-20T12:07:18","jaar":2018,"plek":"Feesten & mijlpalen"},{"groot":"fotos/062-2bba8323-3e52-461f-9f86-1a2f81c6933e.jpg","klein":"fotos/062-2bba8323-3e52-461f-9f86-1a2f81c6933e-k.jpg","breedte":800,"hoogte":600,"datum":"2018-05-29T18:05:52","jaar":2018,"plek":"Thuis"},{"groot":"fotos/063-photo-2018-06-22-16-55-40.jpg","klein":"fotos/063-photo-2018-06-22-16-55-40-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-06-22T16:55:40","jaar":2018,"plek":"Feesten & mijlpalen"},{"groot":"fotos/064-photo-2018-06-22-16-56-27.jpg","klein":"fotos/064-photo-2018-06-22-16-56-27-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-06-22T16:56:27","jaar":2018,"plek":"Feesten & mijlpalen"},{"groot":"fotos/065-c8f1e3fb-a1a4-472f-b20c-91e0479e573d.jpg","klein":"fotos/065-c8f1e3fb-a1a4-472f-b20c-91e0479e573d-k.jpg","breedte":800,"hoogte":600,"datum":"2018-07-05T18:50:07","jaar":2018,"plek":"Onderweg in Nederland"},{"groot":"fotos/066-photo-2018-07-05-20-16-53.jpg","klein":"fotos/066-photo-2018-07-05-20-16-53-k.jpg","breedte":800,"hoogte":600,"datum":"2018-07-05T20:16:53","jaar":2018,"plek":"Onderweg in Nederland"},{"groot":"fotos/067-photo-2018-07-05-20-48-27.jpg","klein":"fotos/067-photo-2018-07-05-20-48-27-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-07-05T20:48:27","jaar":2018,"plek":"Onderweg in Nederland"},{"groot":"fotos/068-photo-2018-07-05-20-49-13.jpg","klein":"fotos/068-photo-2018-07-05-20-49-13-k.jpg","breedte":800,"hoogte":600,"datum":"2018-07-05T20:49:13","jaar":2018,"plek":"Onderweg in Nederland"},{"groot":"fotos/069-photo-2018-07-05-20-49-20.jpg","klein":"fotos/069-photo-2018-07-05-20-49-20-k.jpg","breedte":800,"hoogte":600,"datum":"2018-07-05T20:49:20","jaar":2018,"plek":"Onderweg in Nederland"},{"groot":"fotos/070-1092e013-ffa2-4c0c-ba04-18fd95fcf340.jpg","klein":"fotos/070-1092e013-ffa2-4c0c-ba04-18fd95fcf340-k.jpg","breedte":800,"hoogte":600,"datum":"2018-07-16T12:49:06","jaar":2018,"plek":"Italië"},{"groot":"fotos/071-e134bf6b-3419-47d8-9dbd-a74311e932fe.jpg","klein":"fotos/071-e134bf6b-3419-47d8-9dbd-a74311e932fe-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-07-22T17:17:01","jaar":2018,"plek":"Italië"},{"groot":"fotos/072-848cfcc9-25b6-45aa-bef2-201b4aef1967.jpg","klein":"fotos/072-848cfcc9-25b6-45aa-bef2-201b4aef1967-k.jpg","breedte":800,"hoogte":600,"datum":"2018-07-22T17:17:03","jaar":2018,"plek":"Italië"},{"groot":"fotos/073-115278cb-88d8-489c-ae1e-acc4ea49e3b8.jpg","klein":"fotos/073-115278cb-88d8-489c-ae1e-acc4ea49e3b8-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-07-22T17:17:05","jaar":2018,"plek":"Italië"},{"groot":"fotos/074-photo-2018-07-22-19-17-01.jpg","klein":"fotos/074-photo-2018-07-22-19-17-01-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-07-22T19:17:01","jaar":2018,"plek":"Italië"},{"groot":"fotos/075-photo-2018-07-22-19-17-03.jpg","klein":"fotos/075-photo-2018-07-22-19-17-03-k.jpg","breedte":800,"hoogte":600,"datum":"2018-07-22T19:17:03","jaar":2018,"plek":"Italië"},{"groot":"fotos/076-9b9b6cf7-a813-467c-aba1-1004185df855.jpg","klein":"fotos/076-9b9b6cf7-a813-467c-aba1-1004185df855-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-08-01T09:47:48","jaar":2018,"plek":"Italië"},{"groot":"fotos/077-893f912f-154c-4a24-9da0-b5e2494375dd.jpg","klein":"fotos/077-893f912f-154c-4a24-9da0-b5e2494375dd-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-08-01T09:47:49","jaar":2018,"plek":"Italië"},{"groot":"fotos/078-df60c44d-bfb4-4e3b-8364-f974591a293a.jpg","klein":"fotos/078-df60c44d-bfb4-4e3b-8364-f974591a293a-k.jpg","breedte":800,"hoogte":600,"datum":"2018-08-01T09:47:50","jaar":2018,"plek":"Italië"},{"groot":"fotos/079-2d9407de-f05e-4d3d-b7d0-af55d926574e.jpg","klein":"fotos/079-2d9407de-f05e-4d3d-b7d0-af55d926574e-k.jpg","breedte":800,"hoogte":600,"datum":"2018-08-01T09:48:00","jaar":2018,"plek":"Italië"},{"groot":"fotos/080-photo-2018-08-01-11-47-45.jpg","klein":"fotos/080-photo-2018-08-01-11-47-45-k.jpg","breedte":800,"hoogte":600,"datum":"2018-08-01T11:47:45","jaar":2018,"plek":"Italië"},{"groot":"fotos/081-photo-2018-08-01-11-47-48.jpg","klein":"fotos/081-photo-2018-08-01-11-47-48-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-08-01T11:47:48","jaar":2018,"plek":"Italië"},{"groot":"fotos/082-photo-2018-08-01-11-47-49-2.jpg","klein":"fotos/082-photo-2018-08-01-11-47-49-2-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-08-01T11:47:49","jaar":2018,"plek":"Italië"},{"groot":"fotos/083-photo-2018-08-01-11-47-49.jpg","klein":"fotos/083-photo-2018-08-01-11-47-49-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-08-01T11:47:49","jaar":2018,"plek":"Italië"},{"groot":"fotos/084-photo-2018-08-01-11-47-51.jpg","klein":"fotos/084-photo-2018-08-01-11-47-51-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-08-01T11:47:51","jaar":2018,"plek":"Italië"},{"groot":"fotos/085-photo-2018-08-01-11-47-52.jpg","klein":"fotos/085-photo-2018-08-01-11-47-52-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-08-01T11:47:52","jaar":2018,"plek":"Italië"},{"groot":"fotos/086-photo-2018-08-01-11-47-53-2.jpg","klein":"fotos/086-photo-2018-08-01-11-47-53-2-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-08-01T11:47:53","jaar":2018,"plek":"Italië"},{"groot":"fotos/087-photo-2018-08-01-11-47-53.jpg","klein":"fotos/087-photo-2018-08-01-11-47-53-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-08-01T11:47:53","jaar":2018,"plek":"Italië"},{"groot":"fotos/088-photo-2018-08-01-11-47-54.jpg","klein":"fotos/088-photo-2018-08-01-11-47-54-k.jpg","breedte":800,"hoogte":600,"datum":"2018-08-01T11:47:54","jaar":2018,"plek":"Italië"},{"groot":"fotos/089-photo-2018-08-01-11-47-55-2.jpg","klein":"fotos/089-photo-2018-08-01-11-47-55-2-k.jpg","breedte":800,"hoogte":600,"datum":"2018-08-01T11:47:55","jaar":2018,"plek":"Italië"},{"groot":"fotos/090-photo-2018-08-01-11-47-55.jpg","klein":"fotos/090-photo-2018-08-01-11-47-55-k.jpg","breedte":800,"hoogte":600,"datum":"2018-08-01T11:47:55","jaar":2018,"plek":"Italië"},{"groot":"fotos/091-photo-2018-08-01-11-47-56-2.jpg","klein":"fotos/091-photo-2018-08-01-11-47-56-2-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-08-01T11:47:56","jaar":2018,"plek":"Italië"},{"groot":"fotos/092-photo-2018-08-01-11-47-56.jpg","klein":"fotos/092-photo-2018-08-01-11-47-56-k.jpg","breedte":800,"hoogte":600,"datum":"2018-08-01T11:47:56","jaar":2018,"plek":"Italië"},{"groot":"fotos/093-photo-2018-08-01-11-47-58.jpg","klein":"fotos/093-photo-2018-08-01-11-47-58-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-08-01T11:47:58","jaar":2018,"plek":"Italië"},{"groot":"fotos/094-photo-2018-08-01-11-47-59.jpg","klein":"fotos/094-photo-2018-08-01-11-47-59-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-08-01T11:47:59","jaar":2018,"plek":"Italië"},{"groot":"fotos/095-photo-2018-08-18-17-31-56.jpg","klein":"fotos/095-photo-2018-08-18-17-31-56-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-08-18T17:31:56","jaar":2018,"plek":"Thuis"},{"groot":"fotos/096-photo-2018-08-18-17-31-57.jpg","klein":"fotos/096-photo-2018-08-18-17-31-57-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-08-18T17:31:57","jaar":2018,"plek":"Thuis"},{"groot":"fotos/097-photo-2018-08-18-18-08-04.jpg","klein":"fotos/097-photo-2018-08-18-18-08-04-k.jpg","breedte":768,"hoogte":1024,"datum":"2018-08-18T18:08:04","jaar":2018,"plek":"Thuis"},{"groot":"fotos/098-779a9c22-239e-4775-80de-1b0eccfb2b03.jpg","klein":"fotos/098-779a9c22-239e-4775-80de-1b0eccfb2b03-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-10-26T12:12:26","jaar":2018,"plek":"Skipper"},{"groot":"fotos/099-383e1932-a753-4739-9c85-1b84c22e5873.jpg","klein":"fotos/099-383e1932-a753-4739-9c85-1b84c22e5873-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-10-26T12:12:42","jaar":2018,"plek":"Skipper"},{"groot":"fotos/100-photo-2018-11-02-16-22-41.jpg","klein":"fotos/100-photo-2018-11-02-16-22-41-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-11-02T16:22:41","jaar":2018,"plek":"Thuis"},{"groot":"fotos/101-photo-2018-11-11-14-16-43.jpg","klein":"fotos/101-photo-2018-11-11-14-16-43-k.jpg","breedte":800,"hoogte":1067,"datum":"2018-11-11T14:16:43","jaar":2018,"plek":"Skipper"},{"groot":"fotos/102-photo-2018-11-22-18-57-08.jpg","klein":"fotos/102-photo-2018-11-22-18-57-08-k.jpg","breedte":800,"hoogte":600,"datum":"2018-11-22T18:57:08","jaar":2018,"plek":"Skipper"},{"groot":"fotos/103-photo-2018-12-17-12-53-24.jpg","klein":"fotos/103-photo-2018-12-17-12-53-24-k.jpg","breedte":800,"hoogte":600,"datum":"2018-12-17T12:53:24","jaar":2018,"plek":"Skipper"},{"groot":"fotos/104-photo-2018-12-17-12-53-34.jpg","klein":"fotos/104-photo-2018-12-17-12-53-34-k.jpg","breedte":800,"hoogte":600,"datum":"2018-12-17T12:53:34","jaar":2018,"plek":"Skipper"},{"groot":"fotos/105-photo-2019-01-12-15-50-34.jpg","klein":"fotos/105-photo-2019-01-12-15-50-34-k.jpg","breedte":800,"hoogte":450,"datum":"2019-01-12T15:50:34","jaar":2019,"plek":"Skipper"},{"groot":"fotos/106-photo-2019-01-16-21-36-25.jpg","klein":"fotos/106-photo-2019-01-16-21-36-25-k.jpg","breedte":800,"hoogte":600,"datum":"2019-01-16T21:36:25","jaar":2019,"plek":"Skipper"},{"groot":"fotos/107-photo-2019-03-02-22-56-14.jpg","klein":"fotos/107-photo-2019-03-02-22-56-14-k.jpg","breedte":800,"hoogte":450,"datum":"2019-03-02T22:56:14","jaar":2019,"plek":"Skipper"},{"groot":"fotos/108-photo-2019-03-03-12-22-27.jpg","klein":"fotos/108-photo-2019-03-03-12-22-27-k.jpg","breedte":800,"hoogte":600,"datum":"2019-03-03T12:22:27","jaar":2019,"plek":"Feesten & mijlpalen"},{"groot":"fotos/109-photo-2019-03-03-12-22-28-2.jpg","klein":"fotos/109-photo-2019-03-03-12-22-28-2-k.jpg","breedte":800,"hoogte":600,"datum":"2019-03-03T12:22:28","jaar":2019,"plek":"Feesten & mijlpalen"},{"groot":"fotos/110-photo-2019-03-03-12-22-28.jpg","klein":"fotos/110-photo-2019-03-03-12-22-28-k.jpg","breedte":800,"hoogte":600,"datum":"2019-03-03T12:22:28","jaar":2019,"plek":"Feesten & mijlpalen"},{"groot":"fotos/111-photo-2019-04-23-22-26-29.jpg","klein":"fotos/111-photo-2019-04-23-22-26-29-k.jpg","breedte":800,"hoogte":600,"datum":"2019-04-23T22:26:29","jaar":2019,"plek":"Amerika"},{"groot":"fotos/112-photo-2019-04-26-01-17-07-2.jpg","klein":"fotos/112-photo-2019-04-26-01-17-07-2-k.jpg","breedte":800,"hoogte":600,"datum":"2019-04-26T01:17:07","jaar":2019,"plek":"Amerika"},{"groot":"fotos/113-photo-2019-04-26-01-17-07.jpg","klein":"fotos/113-photo-2019-04-26-01-17-07-k.jpg","breedte":768,"hoogte":1024,"datum":"2019-04-26T01:17:07","jaar":2019,"plek":"Amerika"},{"groot":"fotos/114-photo-2019-04-26-01-17-08.jpg","klein":"fotos/114-photo-2019-04-26-01-17-08-k.jpg","breedte":800,"hoogte":600,"datum":"2019-04-26T01:17:08","jaar":2019,"plek":"Amerika"},{"groot":"fotos/115-photo-2019-04-26-01-23-19.jpg","klein":"fotos/115-photo-2019-04-26-01-23-19-k.jpg","breedte":768,"hoogte":1024,"datum":"2019-04-26T01:23:19","jaar":2019,"plek":"Amerika"},{"groot":"fotos/116-photo-2019-04-26-01-24-30.jpg","klein":"fotos/116-photo-2019-04-26-01-24-30-k.jpg","breedte":800,"hoogte":600,"datum":"2019-04-26T01:24:30","jaar":2019,"plek":"Amerika"},{"groot":"fotos/117-photo-2019-04-29-22-04-11-2.jpg","klein":"fotos/117-photo-2019-04-29-22-04-11-2-k.jpg","breedte":800,"hoogte":600,"datum":"2019-04-29T22:04:11","jaar":2019,"plek":"Amerika"},{"groot":"fotos/118-photo-2019-04-29-22-04-11-3.jpg","klein":"fotos/118-photo-2019-04-29-22-04-11-3-k.jpg","breedte":768,"hoogte":1024,"datum":"2019-04-29T22:04:11","jaar":2019,"plek":"Amerika"},{"groot":"fotos/119-photo-2019-04-29-22-04-11-4.jpg","klein":"fotos/119-photo-2019-04-29-22-04-11-4-k.jpg","breedte":768,"hoogte":1024,"datum":"2019-04-29T22:04:11","jaar":2019,"plek":"Amerika"},{"groot":"fotos/120-photo-2019-04-29-22-04-11.jpg","klein":"fotos/120-photo-2019-04-29-22-04-11-k.jpg","breedte":768,"hoogte":1024,"datum":"2019-04-29T22:04:11","jaar":2019,"plek":"Amerika"},{"groot":"fotos/121-photo-2019-05-01-14-26-40-2.jpg","klein":"fotos/121-photo-2019-05-01-14-26-40-2-k.jpg","breedte":800,"hoogte":600,"datum":"2019-05-01T14:26:40","jaar":2019,"plek":"Amerika"},{"groot":"fotos/122-photo-2019-05-01-14-26-40.jpg","klein":"fotos/122-photo-2019-05-01-14-26-40-k.jpg","breedte":800,"hoogte":1067,"datum":"2019-05-01T14:26:40","jaar":2019,"plek":"Amerika"},{"groot":"fotos/123-photo-2019-05-01-14-26-41.jpg","klein":"fotos/123-photo-2019-05-01-14-26-41-k.jpg","breedte":800,"hoogte":600,"datum":"2019-05-01T14:26:41","jaar":2019,"plek":"Amerika"},{"groot":"fotos/124-photo-2019-05-03-07-35-40.jpg","klein":"fotos/124-photo-2019-05-03-07-35-40-k.jpg","breedte":800,"hoogte":1067,"datum":"2019-05-03T07:35:40","jaar":2019,"plek":"Amerika"},{"groot":"fotos/125-photo-2019-07-08-23-09-56.jpg","klein":"fotos/125-photo-2019-07-08-23-09-56-k.jpg","breedte":800,"hoogte":600,"datum":"2019-07-08T23:09:56","jaar":2019,"plek":"Skipper"},{"groot":"fotos/126-photo-2019-08-01-20-14-37.jpg","klein":"fotos/126-photo-2019-08-01-20-14-37-k.jpg","breedte":800,"hoogte":600,"datum":"2019-08-01T20:14:37","jaar":2019,"plek":"Skipper"},{"groot":"fotos/127-photo-2019-08-07-13-55-37.jpg","klein":"fotos/127-photo-2019-08-07-13-55-37-k.jpg","breedte":800,"hoogte":600,"datum":"2019-08-07T13:55:37","jaar":2019,"plek":"Skipper"},{"groot":"fotos/128-photo-2019-08-12-20-59-04.jpg","klein":"fotos/128-photo-2019-08-12-20-59-04-k.jpg","breedte":800,"hoogte":1421,"datum":"2019-08-12T20:59:04","jaar":2019,"plek":"Skipper"},{"groot":"fotos/129-photo-2019-10-22-23-42-58.jpg","klein":"fotos/129-photo-2019-10-22-23-42-58-k.jpg","breedte":800,"hoogte":1067,"datum":"2019-10-22T23:42:58","jaar":2019,"plek":"Skipper"},{"groot":"fotos/130-photo-2019-10-23-23-55-26.jpg","klein":"fotos/130-photo-2019-10-23-23-55-26-k.jpg","breedte":800,"hoogte":1067,"datum":"2019-10-23T23:55:26","jaar":2019,"plek":"Feesten & mijlpalen"},{"groot":"fotos/131-photo-2019-10-23-23-55-40.jpg","klein":"fotos/131-photo-2019-10-23-23-55-40-k.jpg","breedte":800,"hoogte":600,"datum":"2019-10-23T23:55:40","jaar":2019,"plek":"Feesten & mijlpalen"},{"groot":"fotos/132-photo-2019-10-25-18-44-59.jpg","klein":"fotos/132-photo-2019-10-25-18-44-59-k.jpg","breedte":800,"hoogte":600,"datum":"2019-10-25T18:44:59","jaar":2019,"plek":"Onderweg in Nederland"},{"groot":"fotos/133-photo-2020-02-22-21-01-19.jpg","klein":"fotos/133-photo-2020-02-22-21-01-19-k.jpg","breedte":800,"hoogte":649,"datum":"2020-02-22T21:01:19","jaar":2020,"plek":"Onderweg in Nederland"},{"groot":"fotos/134-photo-2020-03-17-14-14-12.jpg","klein":"fotos/134-photo-2020-03-17-14-14-12-k.jpg","breedte":800,"hoogte":450,"datum":"2020-03-17T14:14:12","jaar":2020,"plek":"Thuis"},{"groot":"fotos/135-photo-2020-03-23-18-56-13.jpg","klein":"fotos/135-photo-2020-03-23-18-56-13-k.jpg","breedte":768,"hoogte":1024,"datum":"2020-03-23T18:56:13","jaar":2020,"plek":"Skipper"},{"groot":"fotos/136-photo-2020-04-17-17-24-17.jpg","klein":"fotos/136-photo-2020-04-17-17-24-17-k.jpg","breedte":800,"hoogte":600,"datum":"2020-04-17T17:24:17","jaar":2020,"plek":"Skipper"},{"groot":"fotos/137-photo-2020-04-19-18-05-20.jpg","klein":"fotos/137-photo-2020-04-19-18-05-20-k.jpg","breedte":800,"hoogte":600,"datum":"2020-04-19T18:05:20","jaar":2020,"plek":"Skipper"},{"groot":"fotos/138-photo-2020-05-04-13-55-09.jpg","klein":"fotos/138-photo-2020-05-04-13-55-09-k.jpg","breedte":800,"hoogte":600,"datum":"2020-05-04T13:55:09","jaar":2020,"plek":"Thuis"},{"groot":"fotos/139-photo-2020-06-03-22-44-41.jpg","klein":"fotos/139-photo-2020-06-03-22-44-41-k.jpg","breedte":800,"hoogte":600,"datum":"2020-06-03T22:44:41","jaar":2020,"plek":"Skipper"},{"groot":"fotos/140-photo-2020-06-03-22-45-49.jpg","klein":"fotos/140-photo-2020-06-03-22-45-49-k.jpg","breedte":800,"hoogte":1067,"datum":"2020-06-03T22:45:49","jaar":2020,"plek":"Skipper"},{"groot":"fotos/141-photo-2020-06-04-19-24-21.jpg","klein":"fotos/141-photo-2020-06-04-19-24-21-k.jpg","breedte":800,"hoogte":1067,"datum":"2020-06-04T19:24:21","jaar":2020,"plek":"Thuis"},{"groot":"fotos/142-photo-2020-06-14-17-24-43.jpg","klein":"fotos/142-photo-2020-06-14-17-24-43-k.jpg","breedte":800,"hoogte":1067,"datum":"2020-06-14T17:24:43","jaar":2020,"plek":"Thuis"},{"groot":"fotos/143-photo-2020-06-14-17-24-44.jpg","klein":"fotos/143-photo-2020-06-14-17-24-44-k.jpg","breedte":800,"hoogte":1067,"datum":"2020-06-14T17:24:44","jaar":2020,"plek":"Thuis"},{"groot":"fotos/144-photo-2020-06-24-10-40-28.jpg","klein":"fotos/144-photo-2020-06-24-10-40-28-k.jpg","breedte":800,"hoogte":450,"datum":"2020-06-24T10:40:28","jaar":2020,"plek":"Skipper"},{"groot":"fotos/145-photo-2020-07-08-11-02-25.jpg","klein":"fotos/145-photo-2020-07-08-11-02-25-k.jpg","breedte":800,"hoogte":1422,"datum":"2020-07-08T11:02:25","jaar":2020,"plek":"Skipper"},{"groot":"fotos/146-photo-2020-07-18-22-12-23.jpg","klein":"fotos/146-photo-2020-07-18-22-12-23-k.jpg","breedte":800,"hoogte":1067,"datum":"2020-07-18T22:12:23","jaar":2020,"plek":"Skipper"},{"groot":"fotos/147-photo-2020-08-07-20-52-00.jpg","klein":"fotos/147-photo-2020-08-07-20-52-00-k.jpg","breedte":800,"hoogte":1067,"datum":"2020-08-07T20:52:00","jaar":2020,"plek":"Skipper"},{"groot":"fotos/148-photo-2020-08-14-21-54-47.jpg","klein":"fotos/148-photo-2020-08-14-21-54-47-k.jpg","breedte":800,"hoogte":600,"datum":"2020-08-14T21:54:47","jaar":2020,"plek":"Skipper"},{"groot":"fotos/149-photo-2020-08-18-18-10-09.jpg","klein":"fotos/149-photo-2020-08-18-18-10-09-k.jpg","breedte":800,"hoogte":1422,"datum":"2020-08-18T18:10:09","jaar":2020,"plek":"Skipper"},{"groot":"fotos/150-photo-2020-08-30-15-22-17.jpg","klein":"fotos/150-photo-2020-08-30-15-22-17-k.jpg","breedte":800,"hoogte":600,"datum":"2020-08-30T15:22:17","jaar":2020,"plek":"Thuis"},{"groot":"fotos/151-photo-2020-08-30-15-22-27.jpg","klein":"fotos/151-photo-2020-08-30-15-22-27-k.jpg","breedte":800,"hoogte":600,"datum":"2020-08-30T15:22:27","jaar":2020,"plek":"Thuis"},{"groot":"fotos/152-photo-2020-08-30-15-22-35.jpg","klein":"fotos/152-photo-2020-08-30-15-22-35-k.jpg","breedte":800,"hoogte":600,"datum":"2020-08-30T15:22:35","jaar":2020,"plek":"Thuis"},{"groot":"fotos/153-photo-2020-10-04-13-24-56.jpg","klein":"fotos/153-photo-2020-10-04-13-24-56-k.jpg","breedte":800,"hoogte":1422,"datum":"2020-10-04T13:24:56","jaar":2020,"plek":"Skipper"},{"groot":"fotos/154-photo-2020-12-18-22-14-59.jpg","klein":"fotos/154-photo-2020-12-18-22-14-59-k.jpg","breedte":800,"hoogte":1422,"datum":"2020-12-18T22:14:59","jaar":2020,"plek":"Thuis"},{"groot":"fotos/155-photo-2020-12-21-23-51-49.jpg","klein":"fotos/155-photo-2020-12-21-23-51-49-k.jpg","breedte":768,"hoogte":1024,"datum":"2020-12-21T23:51:49","jaar":2020,"plek":"Skipper"},{"groot":"fotos/156-photo-2020-12-22-09-29-16.jpg","klein":"fotos/156-photo-2020-12-22-09-29-16-k.jpg","breedte":768,"hoogte":1024,"datum":"2020-12-22T09:29:16","jaar":2020,"plek":"Skipper"},{"groot":"fotos/157-photo-2021-01-04-18-07-29.jpg","klein":"fotos/157-photo-2021-01-04-18-07-29-k.jpg","breedte":800,"hoogte":1421,"datum":"2021-01-04T18:07:29","jaar":2021,"plek":"Skipper"},{"groot":"fotos/158-photo-2021-01-07-12-22-30.jpg","klein":"fotos/158-photo-2021-01-07-12-22-30-k.jpg","breedte":768,"hoogte":1024,"datum":"2021-01-07T12:22:30","jaar":2021,"plek":"Thuis"},{"groot":"fotos/159-photo-2021-01-17-10-56-32.jpg","klein":"fotos/159-photo-2021-01-17-10-56-32-k.jpg","breedte":768,"hoogte":1024,"datum":"2021-01-17T10:56:32","jaar":2021,"plek":"Thuis"},{"groot":"fotos/160-photo-2021-01-17-12-37-38.jpg","klein":"fotos/160-photo-2021-01-17-12-37-38-k.jpg","breedte":800,"hoogte":1067,"datum":"2021-01-17T12:37:38","jaar":2021,"plek":"Thuis"},{"groot":"fotos/161-photo-2021-01-22-13-41-50.jpg","klein":"fotos/161-photo-2021-01-22-13-41-50-k.jpg","breedte":800,"hoogte":600,"datum":"2021-01-22T13:41:50","jaar":2021,"plek":"Thuis"},{"groot":"fotos/162-photo-2021-02-24-10-49-47-2.jpg","klein":"fotos/162-photo-2021-02-24-10-49-47-2-k.jpg","breedte":768,"hoogte":1024,"datum":"2021-02-24T10:49:47","jaar":2021,"plek":"Op het water"},{"groot":"fotos/163-photo-2021-02-24-10-49-47.jpg","klein":"fotos/163-photo-2021-02-24-10-49-47-k.jpg","breedte":768,"hoogte":1024,"datum":"2021-02-24T10:49:47","jaar":2021,"plek":"Op het water"},{"groot":"fotos/164-photo-2021-04-26-11-28-50.jpg","klein":"fotos/164-photo-2021-04-26-11-28-50-k.jpg","breedte":800,"hoogte":600,"datum":"2021-04-26T11:28:50","jaar":2021,"plek":"Op het water"},{"groot":"fotos/165-photo-2021-04-27-12-21-02.jpg","klein":"fotos/165-photo-2021-04-27-12-21-02-k.jpg","breedte":800,"hoogte":600,"datum":"2021-04-27T12:21:02","jaar":2021,"plek":"Op het water"},{"groot":"fotos/166-photo-2021-04-27-13-08-27.jpg","klein":"fotos/166-photo-2021-04-27-13-08-27-k.jpg","breedte":800,"hoogte":600,"datum":"2021-04-27T13:08:27","jaar":2021,"plek":"Op het water"},{"groot":"fotos/167-photo-2021-04-27-13-11-49.jpg","klein":"fotos/167-photo-2021-04-27-13-11-49-k.jpg","breedte":800,"hoogte":600,"datum":"2021-04-27T13:11:49","jaar":2021,"plek":"Op het water"},{"groot":"fotos/168-photo-2021-04-27-13-17-42.jpg","klein":"fotos/168-photo-2021-04-27-13-17-42-k.jpg","breedte":768,"hoogte":1024,"datum":"2021-04-27T13:17:42","jaar":2021,"plek":"Op het water"},{"groot":"fotos/169-photo-2021-04-27-13-50-09.jpg","klein":"fotos/169-photo-2021-04-27-13-50-09-k.jpg","breedte":800,"hoogte":1067,"datum":"2021-04-27T13:50:09","jaar":2021,"plek":"Op het water"},{"groot":"fotos/170-photo-2021-04-27-14-12-08.jpg","klein":"fotos/170-photo-2021-04-27-14-12-08-k.jpg","breedte":800,"hoogte":1422,"datum":"2021-04-27T14:12:08","jaar":2021,"plek":"Op het water"},{"groot":"fotos/171-photo-2021-05-16-12-36-03.jpg","klein":"fotos/171-photo-2021-05-16-12-36-03-k.jpg","breedte":768,"hoogte":1024,"datum":"2021-05-16T12:36:03","jaar":2021,"plek":"Uit eten"},{"groot":"fotos/172-photo-2021-06-10-19-40-57-2.jpg","klein":"fotos/172-photo-2021-06-10-19-40-57-2-k.jpg","breedte":768,"hoogte":1024,"datum":"2021-06-10T19:40:57","jaar":2021,"plek":"Feesten & mijlpalen"},{"groot":"fotos/173-photo-2021-06-10-19-40-57.jpg","klein":"fotos/173-photo-2021-06-10-19-40-57-k.jpg","breedte":768,"hoogte":1024,"datum":"2021-06-10T19:40:57","jaar":2021,"plek":"Feesten & mijlpalen"},{"groot":"fotos/174-photo-2021-06-10-19-41-23.jpg","klein":"fotos/174-photo-2021-06-10-19-41-23-k.jpg","breedte":768,"hoogte":1024,"datum":"2021-06-10T19:41:23","jaar":2021,"plek":"Feesten & mijlpalen"},{"groot":"fotos/175-photo-2021-06-10-19-44-04-2.jpg","klein":"fotos/175-photo-2021-06-10-19-44-04-2-k.jpg","breedte":768,"hoogte":1024,"datum":"2021-06-10T19:44:04","jaar":2021,"plek":"Feesten & mijlpalen"},{"groot":"fotos/176-photo-2021-06-10-19-44-04-3.jpg","klein":"fotos/176-photo-2021-06-10-19-44-04-3-k.jpg","breedte":800,"hoogte":600,"datum":"2021-06-10T19:44:04","jaar":2021,"plek":"Feesten & mijlpalen"},{"groot":"fotos/177-photo-2021-06-10-19-44-04-4.jpg","klein":"fotos/177-photo-2021-06-10-19-44-04-4-k.jpg","breedte":800,"hoogte":601,"datum":"2021-06-10T19:44:04","jaar":2021,"plek":"Feesten & mijlpalen"},{"groot":"fotos/178-photo-2021-06-10-19-44-04-5.jpg","klein":"fotos/178-photo-2021-06-10-19-44-04-5-k.jpg","breedte":800,"hoogte":601,"datum":"2021-06-10T19:44:04","jaar":2021,"plek":"Feesten & mijlpalen"},{"groot":"fotos/179-photo-2021-06-10-19-44-04-6.jpg","klein":"fotos/179-photo-2021-06-10-19-44-04-6-k.jpg","breedte":800,"hoogte":601,"datum":"2021-06-10T19:44:04","jaar":2021,"plek":"Feesten & mijlpalen"},{"groot":"fotos/180-photo-2021-06-10-19-44-04.jpg","klein":"fotos/180-photo-2021-06-10-19-44-04-k.jpg","breedte":800,"hoogte":600,"datum":"2021-06-10T19:44:04","jaar":2021,"plek":"Feesten & mijlpalen"},{"groot":"fotos/181-photo-2021-07-02-22-24-39.jpg","klein":"fotos/181-photo-2021-07-02-22-24-39-k.jpg","breedte":800,"hoogte":600,"datum":"2021-07-02T22:24:39","jaar":2021,"plek":"Feesten & mijlpalen"},{"groot":"fotos/182-photo-2021-07-24-20-18-27-2.jpg","klein":"fotos/182-photo-2021-07-24-20-18-27-2-k.jpg","breedte":800,"hoogte":600,"datum":"2021-07-24T20:18:27","jaar":2021,"plek":"Op het water"},{"groot":"fotos/183-photo-2021-07-24-20-18-27-3.jpg","klein":"fotos/183-photo-2021-07-24-20-18-27-3-k.jpg","breedte":800,"hoogte":600,"datum":"2021-07-24T20:18:27","jaar":2021,"plek":"Op het water"},{"groot":"fotos/184-photo-2021-07-24-20-18-27-4.jpg","klein":"fotos/184-photo-2021-07-24-20-18-27-4-k.jpg","breedte":800,"hoogte":600,"datum":"2021-07-24T20:18:27","jaar":2021,"plek":"Op het water"},{"groot":"fotos/185-photo-2021-07-24-20-18-27-5.jpg","klein":"fotos/185-photo-2021-07-24-20-18-27-5-k.jpg","breedte":800,"hoogte":600,"datum":"2021-07-24T20:18:27","jaar":2021,"plek":"Op het water"},{"groot":"fotos/186-photo-2021-07-24-20-18-27.jpg","klein":"fotos/186-photo-2021-07-24-20-18-27-k.jpg","breedte":800,"hoogte":600,"datum":"2021-07-24T20:18:27","jaar":2021,"plek":"Op het water"},{"groot":"fotos/187-photo-2021-07-28-16-23-39.jpg","klein":"fotos/187-photo-2021-07-28-16-23-39-k.jpg","breedte":800,"hoogte":600,"datum":"2021-07-28T16:23:39","jaar":2021,"plek":"Feesten & mijlpalen"},{"groot":"fotos/188-photo-2021-07-28-16-25-46-2.jpg","klein":"fotos/188-photo-2021-07-28-16-25-46-2-k.jpg","breedte":800,"hoogte":600,"datum":"2021-07-28T16:25:46","jaar":2021,"plek":"Feesten & mijlpalen"},{"groot":"fotos/189-photo-2021-07-28-16-25-46.jpg","klein":"fotos/189-photo-2021-07-28-16-25-46-k.jpg","breedte":800,"hoogte":600,"datum":"2021-07-28T16:25:46","jaar":2021,"plek":"Feesten & mijlpalen"},{"groot":"fotos/190-photo-2021-07-28-16-25-47.jpg","klein":"fotos/190-photo-2021-07-28-16-25-47-k.jpg","breedte":800,"hoogte":601,"datum":"2021-07-28T16:25:47","jaar":2021,"plek":"Feesten & mijlpalen"},{"groot":"fotos/191-photo-2021-07-28-16-28-23-2.jpg","klein":"fotos/191-photo-2021-07-28-16-28-23-2-k.jpg","breedte":768,"hoogte":1024,"datum":"2021-07-28T16:28:23","jaar":2021,"plek":"Feesten & mijlpalen"},{"groot":"fotos/192-photo-2021-07-28-16-28-23.jpg","klein":"fotos/192-photo-2021-07-28-16-28-23-k.jpg","breedte":768,"hoogte":1024,"datum":"2021-07-28T16:28:23","jaar":2021,"plek":"Feesten & mijlpalen"},{"groot":"fotos/193-photo-2021-07-28-16-29-10.jpg","klein":"fotos/193-photo-2021-07-28-16-29-10-k.jpg","breedte":768,"hoogte":1024,"datum":"2021-07-28T16:29:10","jaar":2021,"plek":"Feesten & mijlpalen"},{"groot":"fotos/194-photo-2021-08-03-23-41-11-2.jpg","klein":"fotos/194-photo-2021-08-03-23-41-11-2-k.jpg","breedte":768,"hoogte":1024,"datum":"2021-08-03T23:41:11","jaar":2021,"plek":"Uit eten"},{"groot":"fotos/195-photo-2021-08-03-23-41-11.jpg","klein":"fotos/195-photo-2021-08-03-23-41-11-k.jpg","breedte":768,"hoogte":1024,"datum":"2021-08-03T23:41:11","jaar":2021,"plek":"Uit eten"},{"groot":"fotos/196-photo-2021-08-03-23-42-14.jpg","klein":"fotos/196-photo-2021-08-03-23-42-14-k.jpg","breedte":800,"hoogte":600,"datum":"2021-08-03T23:42:14","jaar":2021,"plek":"Uit eten"},{"groot":"fotos/197-photo-2021-08-03-23-42-15.jpg","klein":"fotos/197-photo-2021-08-03-23-42-15-k.jpg","breedte":800,"hoogte":600,"datum":"2021-08-03T23:42:15","jaar":2021,"plek":"Uit eten"},{"groot":"fotos/198-photo-2021-08-05-20-30-22.jpg","klein":"fotos/198-photo-2021-08-05-20-30-22-k.jpg","breedte":800,"hoogte":600,"datum":"2021-08-05T20:30:22","jaar":2021,"plek":"Uit eten"},{"groot":"fotos/199-photo-2021-10-10-14-27-12.jpg","klein":"fotos/199-photo-2021-10-10-14-27-12-k.jpg","breedte":768,"hoogte":1024,"datum":"2021-10-10T14:27:12","jaar":2021,"plek":"Skipper"},{"groot":"fotos/200-photo-2021-10-17-15-07-37-2.jpg","klein":"fotos/200-photo-2021-10-17-15-07-37-2-k.jpg","breedte":800,"hoogte":600,"datum":"2021-10-17T15:07:37","jaar":2021,"plek":"Wandelen & buiten"},{"groot":"fotos/201-photo-2021-10-17-15-07-37.jpg","klein":"fotos/201-photo-2021-10-17-15-07-37-k.jpg","breedte":800,"hoogte":600,"datum":"2021-10-17T15:07:37","jaar":2021,"plek":"Wandelen & buiten"},{"groot":"fotos/202-photo-2021-11-12-20-14-13.jpg","klein":"fotos/202-photo-2021-11-12-20-14-13-k.jpg","breedte":800,"hoogte":1421,"datum":"2021-11-12T20:14:13","jaar":2021,"plek":"Skipper"},{"groot":"fotos/203-photo-2022-02-06-22-25-34.jpg","klein":"fotos/203-photo-2022-02-06-22-25-34-k.jpg","breedte":800,"hoogte":600,"datum":"2022-02-06T22:25:34","jaar":2022,"plek":"Thuis"},{"groot":"fotos/204-photo-2022-02-11-19-41-28.jpg","klein":"fotos/204-photo-2022-02-11-19-41-28-k.jpg","breedte":800,"hoogte":600,"datum":"2022-02-11T19:41:28","jaar":2022,"plek":"Skipper"},{"groot":"fotos/205-photo-2022-02-15-16-04-35.jpg","klein":"fotos/205-photo-2022-02-15-16-04-35-k.jpg","breedte":800,"hoogte":600,"datum":"2022-02-15T16:04:35","jaar":2022,"plek":"Skipper"},{"groot":"fotos/206-photo-2022-02-17-18-19-17.jpg","klein":"fotos/206-photo-2022-02-17-18-19-17-k.jpg","breedte":800,"hoogte":600,"datum":"2022-02-17T18:19:17","jaar":2022,"plek":"Onderweg in Nederland"},{"groot":"fotos/207-photo-2022-03-23-18-45-27.jpg","klein":"fotos/207-photo-2022-03-23-18-45-27-k.jpg","breedte":800,"hoogte":600,"datum":"2022-03-23T18:45:27","jaar":2022,"plek":"Feesten & mijlpalen"},{"groot":"fotos/208-photo-2022-04-18-15-19-39-2.jpg","klein":"fotos/208-photo-2022-04-18-15-19-39-2-k.jpg","breedte":800,"hoogte":600,"datum":"2022-04-18T15:19:39","jaar":2022,"plek":"Feesten & mijlpalen"},{"groot":"fotos/209-photo-2022-04-18-15-19-39.jpg","klein":"fotos/209-photo-2022-04-18-15-19-39-k.jpg","breedte":768,"hoogte":1024,"datum":"2022-04-18T15:19:39","jaar":2022,"plek":"Feesten & mijlpalen"},{"groot":"fotos/210-photo-2022-04-30-18-51-39.jpg","klein":"fotos/210-photo-2022-04-30-18-51-39-k.jpg","breedte":800,"hoogte":600,"datum":"2022-04-30T18:51:39","jaar":2022,"plek":"Onderweg in Nederland"},{"groot":"fotos/211-photo-2022-04-30-19-02-07.jpg","klein":"fotos/211-photo-2022-04-30-19-02-07-k.jpg","breedte":800,"hoogte":600,"datum":"2022-04-30T19:02:07","jaar":2022,"plek":"Onderweg in Nederland"},{"groot":"fotos/212-photo-2022-06-13-20-12-01.jpg","klein":"fotos/212-photo-2022-06-13-20-12-01-k.jpg","breedte":800,"hoogte":600,"datum":"2022-06-13T20:12:01","jaar":2022,"plek":"Op het water"},{"groot":"fotos/213-photo-2022-06-14-14-05-47.jpg","klein":"fotos/213-photo-2022-06-14-14-05-47-k.jpg","breedte":800,"hoogte":600,"datum":"2022-06-14T14:05:47","jaar":2022,"plek":"Op het water"},{"groot":"fotos/214-photo-2022-06-22-13-48-18.jpg","klein":"fotos/214-photo-2022-06-22-13-48-18-k.jpg","breedte":768,"hoogte":1024,"datum":"2022-06-22T13:48:18","jaar":2022,"plek":"Uit eten"},{"groot":"fotos/215-photo-2022-07-09-21-36-24.jpg","klein":"fotos/215-photo-2022-07-09-21-36-24-k.jpg","breedte":800,"hoogte":600,"datum":"2022-07-09T21:36:24","jaar":2022,"plek":"Uit eten"},{"groot":"fotos/216-photo-2022-07-11-21-33-10.jpg","klein":"fotos/216-photo-2022-07-11-21-33-10-k.jpg","breedte":800,"hoogte":1732,"datum":"2022-07-11T21:33:10","jaar":2022,"plek":"Onderweg in Nederland"},{"groot":"fotos/217-photo-2022-07-14-14-21-46.jpg","klein":"fotos/217-photo-2022-07-14-14-21-46-k.jpg","breedte":800,"hoogte":1422,"datum":"2022-07-14T14:21:46","jaar":2022,"plek":"Uit eten"},{"groot":"fotos/218-photo-2022-07-14-14-22-51.jpg","klein":"fotos/218-photo-2022-07-14-14-22-51-k.jpg","breedte":800,"hoogte":1422,"datum":"2022-07-14T14:22:51","jaar":2022,"plek":"Uit eten"},{"groot":"fotos/219-photo-2022-07-14-14-23-00.jpg","klein":"fotos/219-photo-2022-07-14-14-23-00-k.jpg","breedte":800,"hoogte":1422,"datum":"2022-07-14T14:23:00","jaar":2022,"plek":"Uit eten"},{"groot":"fotos/220-photo-2022-07-19-13-47-46.jpg","klein":"fotos/220-photo-2022-07-19-13-47-46-k.jpg","breedte":800,"hoogte":600,"datum":"2022-07-19T13:47:46","jaar":2022,"plek":"Thuis"},{"groot":"fotos/221-photo-2022-08-10-17-37-17.jpg","klein":"fotos/221-photo-2022-08-10-17-37-17-k.jpg","breedte":768,"hoogte":1024,"datum":"2022-08-10T17:37:17","jaar":2022,"plek":"Thuis"},{"groot":"fotos/222-photo-2022-08-13-12-23-06.jpg","klein":"fotos/222-photo-2022-08-13-12-23-06-k.jpg","breedte":800,"hoogte":600,"datum":"2022-08-13T12:23:06","jaar":2022,"plek":"Op het water"},{"groot":"fotos/223-photo-2022-08-20-15-34-36-2.jpg","klein":"fotos/223-photo-2022-08-20-15-34-36-2-k.jpg","breedte":800,"hoogte":600,"datum":"2022-08-20T15:34:36","jaar":2022,"plek":"Onderweg in Nederland"},{"groot":"fotos/224-photo-2022-08-20-15-34-36.jpg","klein":"fotos/224-photo-2022-08-20-15-34-36-k.jpg","breedte":800,"hoogte":600,"datum":"2022-08-20T15:34:36","jaar":2022,"plek":"Onderweg in Nederland"},{"groot":"fotos/225-photo-2022-08-31-23-03-19.jpg","klein":"fotos/225-photo-2022-08-31-23-03-19-k.jpg","breedte":800,"hoogte":600,"datum":"2022-08-31T23:03:19","jaar":2022,"plek":"Onderweg in Nederland"},{"groot":"fotos/226-photo-2022-11-08-13-04-43.jpg","klein":"fotos/226-photo-2022-11-08-13-04-43-k.jpg","breedte":768,"hoogte":1024,"datum":"2022-11-08T13:04:43","jaar":2022,"plek":"Skipper"},{"groot":"fotos/227-photo-2022-11-08-13-05-10.jpg","klein":"fotos/227-photo-2022-11-08-13-05-10-k.jpg","breedte":768,"hoogte":1024,"datum":"2022-11-08T13:05:10","jaar":2022,"plek":"Skipper"},{"groot":"fotos/228-photo-2022-11-11-20-21-06.jpg","klein":"fotos/228-photo-2022-11-11-20-21-06-k.jpg","breedte":800,"hoogte":600,"datum":"2022-11-11T20:21:06","jaar":2022,"plek":"België"},{"groot":"fotos/229-photo-2022-11-11-20-21-07.jpg","klein":"fotos/229-photo-2022-11-11-20-21-07-k.jpg","breedte":800,"hoogte":600,"datum":"2022-11-11T20:21:07","jaar":2022,"plek":"België"},{"groot":"fotos/230-photo-2022-11-11-20-21-08.jpg","klein":"fotos/230-photo-2022-11-11-20-21-08-k.jpg","breedte":800,"hoogte":600,"datum":"2022-11-11T20:21:08","jaar":2022,"plek":"België"},{"groot":"fotos/231-photo-2022-11-11-20-21-09-2.jpg","klein":"fotos/231-photo-2022-11-11-20-21-09-2-k.jpg","breedte":800,"hoogte":1067,"datum":"2022-11-11T20:21:09","jaar":2022,"plek":"België"},{"groot":"fotos/232-photo-2022-11-11-20-21-09.jpg","klein":"fotos/232-photo-2022-11-11-20-21-09-k.jpg","breedte":800,"hoogte":600,"datum":"2022-11-11T20:21:09","jaar":2022,"plek":"België"},{"groot":"fotos/233-photo-2022-11-11-20-21-10.jpg","klein":"fotos/233-photo-2022-11-11-20-21-10-k.jpg","breedte":800,"hoogte":600,"datum":"2022-11-11T20:21:10","jaar":2022,"plek":"België"},{"groot":"fotos/234-photo-2022-11-11-20-21-11.jpg","klein":"fotos/234-photo-2022-11-11-20-21-11-k.jpg","breedte":800,"hoogte":600,"datum":"2022-11-11T20:21:11","jaar":2022,"plek":"België"},{"groot":"fotos/235-photo-2023-02-19-23-42-38.jpg","klein":"fotos/235-photo-2023-02-19-23-42-38-k.jpg","breedte":768,"hoogte":1024,"datum":"2023-02-19T23:42:38","jaar":2023,"plek":"Onderweg in Nederland"},{"groot":"fotos/236-photo-2023-02-19-23-43-09.jpg","klein":"fotos/236-photo-2023-02-19-23-43-09-k.jpg","breedte":768,"hoogte":1024,"datum":"2023-02-19T23:43:09","jaar":2023,"plek":"Onderweg in Nederland"},{"groot":"fotos/237-photo-2023-02-19-23-43-10.jpg","klein":"fotos/237-photo-2023-02-19-23-43-10-k.jpg","breedte":768,"hoogte":1024,"datum":"2023-02-19T23:43:10","jaar":2023,"plek":"Onderweg in Nederland"},{"groot":"fotos/238-photo-2023-02-24-20-26-55.jpg","klein":"fotos/238-photo-2023-02-24-20-26-55-k.jpg","breedte":800,"hoogte":1422,"datum":"2023-02-24T20:26:55","jaar":2023,"plek":"Onderweg in Nederland"},{"groot":"fotos/239-photo-2023-04-14-16-36-13.jpg","klein":"fotos/239-photo-2023-04-14-16-36-13-k.jpg","breedte":768,"hoogte":1024,"datum":"2023-04-14T16:36:13","jaar":2023,"plek":"België"},{"groot":"fotos/240-photo-2023-04-14-17-23-26.jpg","klein":"fotos/240-photo-2023-04-14-17-23-26-k.jpg","breedte":768,"hoogte":1024,"datum":"2023-04-14T17:23:26","jaar":2023,"plek":"België"},{"groot":"fotos/241-photo-2023-04-15-16-03-13.jpg","klein":"fotos/241-photo-2023-04-15-16-03-13-k.jpg","breedte":768,"hoogte":1024,"datum":"2023-04-15T16:03:13","jaar":2023,"plek":"België"},{"groot":"fotos/242-photo-2023-04-15-16-03-35.jpg","klein":"fotos/242-photo-2023-04-15-16-03-35-k.jpg","breedte":768,"hoogte":1024,"datum":"2023-04-15T16:03:35","jaar":2023,"plek":"België"},{"groot":"fotos/243-photo-2023-04-26-16-15-59.jpg","klein":"fotos/243-photo-2023-04-26-16-15-59-k.jpg","breedte":800,"hoogte":1065,"datum":"2023-04-26T16:15:59","jaar":2023,"plek":"Onderweg in Nederland"},{"groot":"fotos/244-photo-2023-04-28-21-56-09-2.jpg","klein":"fotos/244-photo-2023-04-28-21-56-09-2-k.jpg","breedte":800,"hoogte":600,"datum":"2023-04-28T21:56:09","jaar":2023,"plek":"Feesten & mijlpalen"},{"groot":"fotos/245-photo-2023-04-28-21-56-09-3.jpg","klein":"fotos/245-photo-2023-04-28-21-56-09-3-k.jpg","breedte":800,"hoogte":600,"datum":"2023-04-28T21:56:09","jaar":2023,"plek":"Feesten & mijlpalen"},{"groot":"fotos/246-photo-2023-04-28-21-56-09.jpg","klein":"fotos/246-photo-2023-04-28-21-56-09-k.jpg","breedte":800,"hoogte":600,"datum":"2023-04-28T21:56:09","jaar":2023,"plek":"Feesten & mijlpalen"},{"groot":"fotos/247-photo-2023-05-03-16-50-46.jpg","klein":"fotos/247-photo-2023-05-03-16-50-46-k.jpg","breedte":800,"hoogte":600,"datum":"2023-05-03T16:50:46","jaar":2023,"plek":"Wandelen & buiten"},{"groot":"fotos/248-photo-2023-05-04-12-33-33.jpg","klein":"fotos/248-photo-2023-05-04-12-33-33-k.jpg","breedte":800,"hoogte":1067,"datum":"2023-05-04T12:33:33","jaar":2023,"plek":"Wandelen & buiten"},{"groot":"fotos/249-photo-2023-06-02-23-10-37.jpg","klein":"fotos/249-photo-2023-06-02-23-10-37-k.jpg","breedte":768,"hoogte":1024,"datum":"2023-06-02T23:10:37","jaar":2023,"plek":"Thuis"},{"groot":"fotos/250-photo-2023-06-14-21-43-36.jpg","klein":"fotos/250-photo-2023-06-14-21-43-36-k.jpg","breedte":768,"hoogte":1024,"datum":"2023-06-14T21:43:36","jaar":2023,"plek":"Uit eten"},{"groot":"fotos/251-photo-2023-06-16-20-45-04.jpg","klein":"fotos/251-photo-2023-06-16-20-45-04-k.jpg","breedte":800,"hoogte":600,"datum":"2023-06-16T20:45:04","jaar":2023,"plek":"Uit eten"},{"groot":"fotos/252-photo-2023-06-20-10-08-47-2.jpg","klein":"fotos/252-photo-2023-06-20-10-08-47-2-k.jpg","breedte":768,"hoogte":1024,"datum":"2023-06-20T10:08:47","jaar":2023,"plek":"Uit eten"},{"groot":"fotos/253-photo-2023-06-20-10-08-47.jpg","klein":"fotos/253-photo-2023-06-20-10-08-47-k.jpg","breedte":768,"hoogte":1024,"datum":"2023-06-20T10:08:47","jaar":2023,"plek":"Uit eten"},{"groot":"fotos/254-photo-2023-06-20-14-22-11.jpg","klein":"fotos/254-photo-2023-06-20-14-22-11-k.jpg","breedte":768,"hoogte":1024,"datum":"2023-06-20T14:22:11","jaar":2023,"plek":"Wandelen & buiten"},{"groot":"fotos/255-photo-2023-06-20-14-22-32.jpg","klein":"fotos/255-photo-2023-06-20-14-22-32-k.jpg","breedte":800,"hoogte":600,"datum":"2023-06-20T14:22:32","jaar":2023,"plek":"Wandelen & buiten"},{"groot":"fotos/256-photo-2023-06-20-14-22-38.jpg","klein":"fotos/256-photo-2023-06-20-14-22-38-k.jpg","breedte":800,"hoogte":1067,"datum":"2023-06-20T14:22:38","jaar":2023,"plek":"Wandelen & buiten"},{"groot":"fotos/257-photo-2023-06-20-14-22-46.jpg","klein":"fotos/257-photo-2023-06-20-14-22-46-k.jpg","breedte":800,"hoogte":1067,"datum":"2023-06-20T14:22:46","jaar":2023,"plek":"Wandelen & buiten"},{"groot":"fotos/258-photo-2023-06-20-14-22-57.jpg","klein":"fotos/258-photo-2023-06-20-14-22-57-k.jpg","breedte":768,"hoogte":1024,"datum":"2023-06-20T14:22:57","jaar":2023,"plek":"Wandelen & buiten"},{"groot":"fotos/259-photo-2023-06-20-14-23-07.jpg","klein":"fotos/259-photo-2023-06-20-14-23-07-k.jpg","breedte":800,"hoogte":600,"datum":"2023-06-20T14:23:07","jaar":2023,"plek":"Wandelen & buiten"},{"groot":"fotos/260-photo-2023-06-30-14-24-24.jpg","klein":"fotos/260-photo-2023-06-30-14-24-24-k.jpg","breedte":800,"hoogte":600,"datum":"2023-06-30T14:24:24","jaar":2023,"plek":"Onderweg in Nederland"},{"groot":"fotos/261-photo-2023-07-01-00-03-54.jpg","klein":"fotos/261-photo-2023-07-01-00-03-54-k.jpg","breedte":768,"hoogte":1024,"datum":"2023-07-01T00:03:54","jaar":2023,"plek":"Onderweg in Nederland"},{"groot":"fotos/262-photo-2023-07-26-11-49-46.jpg","klein":"fotos/262-photo-2023-07-26-11-49-46-k.jpg","breedte":768,"hoogte":1024,"datum":"2023-07-26T11:49:46","jaar":2023,"plek":"Skipper"},{"groot":"fotos/263-photo-2023-09-24-14-20-52.jpg","klein":"fotos/263-photo-2023-09-24-14-20-52-k.jpg","breedte":768,"hoogte":1024,"datum":"2023-09-24T14:20:52","jaar":2023,"plek":"Wandelen & buiten"},{"groot":"fotos/264-photo-2023-09-25-22-11-52-2.jpg","klein":"fotos/264-photo-2023-09-25-22-11-52-2-k.jpg","breedte":800,"hoogte":600,"datum":"2023-09-25T22:11:52","jaar":2023,"plek":"Wandelen & buiten"},{"groot":"fotos/265-photo-2023-09-25-22-11-52.jpg","klein":"fotos/265-photo-2023-09-25-22-11-52-k.jpg","breedte":800,"hoogte":600,"datum":"2023-09-25T22:11:52","jaar":2023,"plek":"Wandelen & buiten"},{"groot":"fotos/266-photo-2023-09-29-20-11-03.jpg","klein":"fotos/266-photo-2023-09-29-20-11-03-k.jpg","breedte":800,"hoogte":600,"datum":"2023-09-29T20:11:03","jaar":2023,"plek":"Uit eten"},{"groot":"fotos/267-photo-2023-10-21-09-36-51.jpg","klein":"fotos/267-photo-2023-10-21-09-36-51-k.jpg","breedte":800,"hoogte":1422,"datum":"2023-10-21T09:36:51","jaar":2023,"plek":"Skipper"},{"groot":"fotos/268-photo-2023-10-27-12-08-32.jpg","klein":"fotos/268-photo-2023-10-27-12-08-32-k.jpg","breedte":800,"hoogte":450,"datum":"2023-10-27T12:08:32","jaar":2023,"plek":"Skipper"},{"groot":"fotos/269-photo-2023-10-28-10-23-42.jpg","klein":"fotos/269-photo-2023-10-28-10-23-42-k.jpg","breedte":800,"hoogte":600,"datum":"2023-10-28T10:23:42","jaar":2023,"plek":"Skipper"},{"groot":"fotos/270-photo-2023-10-31-10-28-22.jpg","klein":"fotos/270-photo-2023-10-31-10-28-22-k.jpg","breedte":800,"hoogte":1067,"datum":"2023-10-31T10:28:22","jaar":2023,"plek":"Thuis"},{"groot":"fotos/271-photo-2023-11-22-18-07-01.jpg","klein":"fotos/271-photo-2023-11-22-18-07-01-k.jpg","breedte":800,"hoogte":600,"datum":"2023-11-22T18:07:01","jaar":2023,"plek":"Skipper"},{"groot":"fotos/272-photo-2023-12-21-23-10-24.jpg","klein":"fotos/272-photo-2023-12-21-23-10-24-k.jpg","breedte":768,"hoogte":1024,"datum":"2023-12-21T23:10:24","jaar":2023,"plek":"Skipper"},{"groot":"fotos/273-photo-2024-01-05-22-29-36-2.jpg","klein":"fotos/273-photo-2024-01-05-22-29-36-2-k.jpg","breedte":800,"hoogte":600,"datum":"2024-01-05T22:29:36","jaar":2024,"plek":"Onderweg in Nederland"},{"groot":"fotos/274-photo-2024-01-05-22-29-36.jpg","klein":"fotos/274-photo-2024-01-05-22-29-36-k.jpg","breedte":800,"hoogte":600,"datum":"2024-01-05T22:29:36","jaar":2024,"plek":"Onderweg in Nederland"},{"groot":"fotos/275-photo-2024-02-03-19-54-19.jpg","klein":"fotos/275-photo-2024-02-03-19-54-19-k.jpg","breedte":800,"hoogte":1422,"datum":"2024-02-03T19:54:19","jaar":2024,"plek":"Onderweg in Nederland"},{"groot":"fotos/276-photo-2024-03-03-18-24-44.jpg","klein":"fotos/276-photo-2024-03-03-18-24-44-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-03-03T18:24:44","jaar":2024,"plek":"Onderweg in Nederland"},{"groot":"fotos/277-photo-2024-03-10-18-05-44.jpg","klein":"fotos/277-photo-2024-03-10-18-05-44-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-03-10T18:05:44","jaar":2024,"plek":"Spanje"},{"groot":"fotos/278-photo-2024-04-03-14-36-36.jpg","klein":"fotos/278-photo-2024-04-03-14-36-36-k.jpg","breedte":800,"hoogte":600,"datum":"2024-04-03T14:36:36","jaar":2024,"plek":"Thuis"},{"groot":"fotos/279-photo-2024-04-03-15-37-04.jpg","klein":"fotos/279-photo-2024-04-03-15-37-04-k.jpg","breedte":800,"hoogte":600,"datum":"2024-04-03T15:37:04","jaar":2024,"plek":"Skipper"},{"groot":"fotos/280-photo-2024-04-26-15-50-08.jpg","klein":"fotos/280-photo-2024-04-26-15-50-08-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-04-26T15:50:08","jaar":2024,"plek":"Thuis"},{"groot":"fotos/281-photo-2024-05-10-17-53-58.jpg","klein":"fotos/281-photo-2024-05-10-17-53-58-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-05-10T17:53:58","jaar":2024,"plek":"België"},{"groot":"fotos/282-photo-2024-05-10-17-54-20.jpg","klein":"fotos/282-photo-2024-05-10-17-54-20-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-05-10T17:54:20","jaar":2024,"plek":"België"},{"groot":"fotos/283-photo-2024-05-11-17-17-14.jpg","klein":"fotos/283-photo-2024-05-11-17-17-14-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-05-11T17:17:14","jaar":2024,"plek":"Onderweg in Nederland"},{"groot":"fotos/284-photo-2024-05-29-16-47-21.jpg","klein":"fotos/284-photo-2024-05-29-16-47-21-k.jpg","breedte":800,"hoogte":1066,"datum":"2024-05-29T16:47:21","jaar":2024,"plek":"Onderweg in Nederland"},{"groot":"fotos/285-photo-2024-06-16-15-13-22.jpg","klein":"fotos/285-photo-2024-06-16-15-13-22-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-06-16T15:13:22","jaar":2024,"plek":"Skipper"},{"groot":"fotos/286-photo-2024-07-12-19-10-37.jpg","klein":"fotos/286-photo-2024-07-12-19-10-37-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-07-12T19:10:37","jaar":2024,"plek":"Thuis"},{"groot":"fotos/287-photo-2024-07-18-23-24-30.jpg","klein":"fotos/287-photo-2024-07-18-23-24-30-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-07-18T23:24:30","jaar":2024,"plek":"Skipper"},{"groot":"fotos/288-photo-2024-07-23-06-13-41-2.jpg","klein":"fotos/288-photo-2024-07-23-06-13-41-2-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-07-23T06:13:41","jaar":2024,"plek":"Thailand"},{"groot":"fotos/289-photo-2024-07-23-06-13-41.jpg","klein":"fotos/289-photo-2024-07-23-06-13-41-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-07-23T06:13:41","jaar":2024,"plek":"Thailand"},{"groot":"fotos/290-photo-2024-07-23-06-14-03.jpg","klein":"fotos/290-photo-2024-07-23-06-14-03-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-07-23T06:14:03","jaar":2024,"plek":"Thailand"},{"groot":"fotos/291-photo-2024-07-23-06-14-28.jpg","klein":"fotos/291-photo-2024-07-23-06-14-28-k.jpg","breedte":800,"hoogte":600,"datum":"2024-07-23T06:14:28","jaar":2024,"plek":"Thailand"},{"groot":"fotos/292-photo-2024-07-23-06-15-36.jpg","klein":"fotos/292-photo-2024-07-23-06-15-36-k.jpg","breedte":800,"hoogte":600,"datum":"2024-07-23T06:15:36","jaar":2024,"plek":"Thailand"},{"groot":"fotos/293-photo-2024-07-23-06-16-52-2.jpg","klein":"fotos/293-photo-2024-07-23-06-16-52-2-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-07-23T06:16:52","jaar":2024,"plek":"Thailand"},{"groot":"fotos/294-photo-2024-07-23-06-16-52.jpg","klein":"fotos/294-photo-2024-07-23-06-16-52-k.jpg","breedte":800,"hoogte":600,"datum":"2024-07-23T06:16:52","jaar":2024,"plek":"Thailand"},{"groot":"fotos/295-photo-2024-07-23-06-16-53.jpg","klein":"fotos/295-photo-2024-07-23-06-16-53-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-07-23T06:16:53","jaar":2024,"plek":"Thailand"},{"groot":"fotos/296-photo-2024-07-23-14-59-55-2.jpg","klein":"fotos/296-photo-2024-07-23-14-59-55-2-k.jpg","breedte":800,"hoogte":600,"datum":"2024-07-23T14:59:55","jaar":2024,"plek":"Thailand"},{"groot":"fotos/297-photo-2024-07-23-14-59-55-3.jpg","klein":"fotos/297-photo-2024-07-23-14-59-55-3-k.jpg","breedte":800,"hoogte":600,"datum":"2024-07-23T14:59:55","jaar":2024,"plek":"Thailand"},{"groot":"fotos/298-photo-2024-07-23-14-59-55.jpg","klein":"fotos/298-photo-2024-07-23-14-59-55-k.jpg","breedte":800,"hoogte":600,"datum":"2024-07-23T14:59:55","jaar":2024,"plek":"Thailand"},{"groot":"fotos/299-photo-2024-07-28-16-03-06.jpg","klein":"fotos/299-photo-2024-07-28-16-03-06-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-07-28T16:03:06","jaar":2024,"plek":"Thailand"},{"groot":"fotos/300-photo-2024-07-28-16-03-07.jpg","klein":"fotos/300-photo-2024-07-28-16-03-07-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-07-28T16:03:07","jaar":2024,"plek":"Thailand"},{"groot":"fotos/301-photo-2024-07-29-16-04-29.jpg","klein":"fotos/301-photo-2024-07-29-16-04-29-k.jpg","breedte":800,"hoogte":600,"datum":"2024-07-29T16:04:29","jaar":2024,"plek":"Thailand"},{"groot":"fotos/302-photo-2024-07-29-16-04-40-2.jpg","klein":"fotos/302-photo-2024-07-29-16-04-40-2-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-07-29T16:04:40","jaar":2024,"plek":"Thailand"},{"groot":"fotos/303-photo-2024-07-29-16-04-40.jpg","klein":"fotos/303-photo-2024-07-29-16-04-40-k.jpg","breedte":800,"hoogte":600,"datum":"2024-07-29T16:04:40","jaar":2024,"plek":"Thailand"},{"groot":"fotos/304-photo-2024-07-29-16-04-41-2.jpg","klein":"fotos/304-photo-2024-07-29-16-04-41-2-k.jpg","breedte":800,"hoogte":600,"datum":"2024-07-29T16:04:41","jaar":2024,"plek":"Thailand"},{"groot":"fotos/305-photo-2024-07-29-16-04-41.jpg","klein":"fotos/305-photo-2024-07-29-16-04-41-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-07-29T16:04:41","jaar":2024,"plek":"Thailand"},{"groot":"fotos/306-photo-2024-07-29-16-04-42-2.jpg","klein":"fotos/306-photo-2024-07-29-16-04-42-2-k.jpg","breedte":800,"hoogte":600,"datum":"2024-07-29T16:04:42","jaar":2024,"plek":"Thailand"},{"groot":"fotos/307-photo-2024-07-29-16-04-42.jpg","klein":"fotos/307-photo-2024-07-29-16-04-42-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-07-29T16:04:42","jaar":2024,"plek":"Thailand"},{"groot":"fotos/308-photo-2024-07-29-16-04-57.jpg","klein":"fotos/308-photo-2024-07-29-16-04-57-k.jpg","breedte":800,"hoogte":600,"datum":"2024-07-29T16:04:57","jaar":2024,"plek":"Thailand"},{"groot":"fotos/309-photo-2024-07-29-16-04-58-2.jpg","klein":"fotos/309-photo-2024-07-29-16-04-58-2-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-07-29T16:04:58","jaar":2024,"plek":"Thailand"},{"groot":"fotos/310-photo-2024-07-29-16-04-58-3.jpg","klein":"fotos/310-photo-2024-07-29-16-04-58-3-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-07-29T16:04:58","jaar":2024,"plek":"Thailand"},{"groot":"fotos/311-photo-2024-07-29-16-04-58.jpg","klein":"fotos/311-photo-2024-07-29-16-04-58-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-07-29T16:04:58","jaar":2024,"plek":"Thailand"},{"groot":"fotos/312-photo-2024-07-29-16-07-12-2.jpg","klein":"fotos/312-photo-2024-07-29-16-07-12-2-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-07-29T16:07:12","jaar":2024,"plek":"Thailand"},{"groot":"fotos/313-photo-2024-07-29-16-07-12.jpg","klein":"fotos/313-photo-2024-07-29-16-07-12-k.jpg","breedte":800,"hoogte":600,"datum":"2024-07-29T16:07:12","jaar":2024,"plek":"Thailand"},{"groot":"fotos/314-photo-2024-07-29-16-07-13-2.jpg","klein":"fotos/314-photo-2024-07-29-16-07-13-2-k.jpg","breedte":800,"hoogte":600,"datum":"2024-07-29T16:07:13","jaar":2024,"plek":"Thailand"},{"groot":"fotos/315-photo-2024-07-29-16-07-13-3.jpg","klein":"fotos/315-photo-2024-07-29-16-07-13-3-k.jpg","breedte":800,"hoogte":600,"datum":"2024-07-29T16:07:13","jaar":2024,"plek":"Thailand"},{"groot":"fotos/316-photo-2024-07-29-16-07-13.jpg","klein":"fotos/316-photo-2024-07-29-16-07-13-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-07-29T16:07:13","jaar":2024,"plek":"Thailand"},{"groot":"fotos/317-photo-2024-07-29-16-07-14-2.jpg","klein":"fotos/317-photo-2024-07-29-16-07-14-2-k.jpg","breedte":800,"hoogte":600,"datum":"2024-07-29T16:07:14","jaar":2024,"plek":"Thailand"},{"groot":"fotos/318-photo-2024-07-29-16-07-14.jpg","klein":"fotos/318-photo-2024-07-29-16-07-14-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-07-29T16:07:14","jaar":2024,"plek":"Thailand"},{"groot":"fotos/319-photo-2024-08-02-07-32-23-2.jpg","klein":"fotos/319-photo-2024-08-02-07-32-23-2-k.jpg","breedte":800,"hoogte":600,"datum":"2024-08-02T07:32:23","jaar":2024,"plek":"Thailand"},{"groot":"fotos/320-photo-2024-08-02-07-32-23.jpg","klein":"fotos/320-photo-2024-08-02-07-32-23-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-08-02T07:32:23","jaar":2024,"plek":"Thailand"},{"groot":"fotos/321-photo-2024-08-03-04-51-53.jpg","klein":"fotos/321-photo-2024-08-03-04-51-53-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-08-03T04:51:53","jaar":2024,"plek":"Thailand"},{"groot":"fotos/322-photo-2024-08-27-14-51-06.jpg","klein":"fotos/322-photo-2024-08-27-14-51-06-k.jpg","breedte":800,"hoogte":1066,"datum":"2024-08-27T14:51:06","jaar":2024,"plek":"Thailand"},{"groot":"fotos/323-photo-2024-11-13-11-42-20.jpg","klein":"fotos/323-photo-2024-11-13-11-42-20-k.jpg","breedte":800,"hoogte":600,"datum":"2024-11-13T11:42:20","jaar":2024,"plek":"Onderweg in Nederland"},{"groot":"fotos/324-photo-2024-11-16-06-01-57.jpg","klein":"fotos/324-photo-2024-11-16-06-01-57-k.jpg","breedte":800,"hoogte":600,"datum":"2024-11-16T06:01:57","jaar":2024,"plek":"Onderweg in Nederland"},{"groot":"fotos/325-photo-2024-11-21-08-11-39.jpg","klein":"fotos/325-photo-2024-11-21-08-11-39-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-11-21T08:11:39","jaar":2024,"plek":"Onderweg in Nederland"},{"groot":"fotos/326-photo-2024-11-21-08-11-42.jpg","klein":"fotos/326-photo-2024-11-21-08-11-42-k.jpg","breedte":800,"hoogte":600,"datum":"2024-11-21T08:11:42","jaar":2024,"plek":"Onderweg in Nederland"},{"groot":"fotos/327-photo-2024-11-21-08-11-43.jpg","klein":"fotos/327-photo-2024-11-21-08-11-43-k.jpg","breedte":800,"hoogte":1067,"datum":"2024-11-21T08:11:43","jaar":2024,"plek":"Onderweg in Nederland"},{"groot":"fotos/328-photo-2025-01-19-20-09-48.jpg","klein":"fotos/328-photo-2025-01-19-20-09-48-k.jpg","breedte":800,"hoogte":600,"datum":"2025-01-19T20:09:48","jaar":2025,"plek":"Onderweg in Nederland"},{"groot":"fotos/329-photo-2025-01-19-20-11-20.jpg","klein":"fotos/329-photo-2025-01-19-20-11-20-k.jpg","breedte":800,"hoogte":600,"datum":"2025-01-19T20:11:20","jaar":2025,"plek":"Onderweg in Nederland"},{"groot":"fotos/330-photo-2025-04-03-13-37-33.jpg","klein":"fotos/330-photo-2025-04-03-13-37-33-k.jpg","breedte":800,"hoogte":1066,"datum":"2025-04-03T13:37:33","jaar":2025,"plek":"Onderweg in Nederland"},{"groot":"fotos/331-photo-2025-04-03-13-37-51.jpg","klein":"fotos/331-photo-2025-04-03-13-37-51-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-04-03T13:37:51","jaar":2025,"plek":"Onderweg in Nederland"},{"groot":"fotos/332-photo-2025-04-12-10-14-18.jpg","klein":"fotos/332-photo-2025-04-12-10-14-18-k.jpg","breedte":800,"hoogte":450,"datum":"2025-04-12T10:14:18","jaar":2025,"plek":"Feesten & mijlpalen"},{"groot":"fotos/333-photo-2025-04-12-10-31-47.jpg","klein":"fotos/333-photo-2025-04-12-10-31-47-k.jpg","breedte":800,"hoogte":600,"datum":"2025-04-12T10:31:47","jaar":2025,"plek":"Feesten & mijlpalen"},{"groot":"fotos/334-photo-2025-05-02-14-01-19.jpg","klein":"fotos/334-photo-2025-05-02-14-01-19-k.jpg","breedte":800,"hoogte":600,"datum":"2025-05-02T14:01:19","jaar":2025,"plek":"Wandelen & buiten"},{"groot":"fotos/335-photo-2025-05-02-14-03-15.jpg","klein":"fotos/335-photo-2025-05-02-14-03-15-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-05-02T14:03:15","jaar":2025,"plek":"Wandelen & buiten"},{"groot":"fotos/336-photo-2025-05-04-22-04-05-2.jpg","klein":"fotos/336-photo-2025-05-04-22-04-05-2-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-05-04T22:04:05","jaar":2025,"plek":"Uit eten"},{"groot":"fotos/337-photo-2025-05-04-22-04-05-3.jpg","klein":"fotos/337-photo-2025-05-04-22-04-05-3-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-05-04T22:04:05","jaar":2025,"plek":"Uit eten"},{"groot":"fotos/338-photo-2025-05-04-22-04-05.jpg","klein":"fotos/338-photo-2025-05-04-22-04-05-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-05-04T22:04:05","jaar":2025,"plek":"Uit eten"},{"groot":"fotos/339-photo-2025-06-20-18-50-35.jpg","klein":"fotos/339-photo-2025-06-20-18-50-35-k.jpg","breedte":800,"hoogte":600,"datum":"2025-06-20T18:50:35","jaar":2025,"plek":"Spanje"},{"groot":"fotos/340-photo-2025-06-20-18-50-36-2.jpg","klein":"fotos/340-photo-2025-06-20-18-50-36-2-k.jpg","breedte":800,"hoogte":600,"datum":"2025-06-20T18:50:36","jaar":2025,"plek":"Spanje"},{"groot":"fotos/341-photo-2025-06-20-18-50-36.jpg","klein":"fotos/341-photo-2025-06-20-18-50-36-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-06-20T18:50:36","jaar":2025,"plek":"Spanje"},{"groot":"fotos/342-photo-2025-06-20-18-50-37-2.jpg","klein":"fotos/342-photo-2025-06-20-18-50-37-2-k.jpg","breedte":800,"hoogte":600,"datum":"2025-06-20T18:50:37","jaar":2025,"plek":"Spanje"},{"groot":"fotos/343-photo-2025-06-20-18-50-37-3.jpg","klein":"fotos/343-photo-2025-06-20-18-50-37-3-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-06-20T18:50:37","jaar":2025,"plek":"Spanje"},{"groot":"fotos/344-photo-2025-06-20-18-50-37.jpg","klein":"fotos/344-photo-2025-06-20-18-50-37-k.jpg","breedte":800,"hoogte":600,"datum":"2025-06-20T18:50:37","jaar":2025,"plek":"Spanje"},{"groot":"fotos/345-photo-2025-06-20-18-50-38-2.jpg","klein":"fotos/345-photo-2025-06-20-18-50-38-2-k.jpg","breedte":800,"hoogte":600,"datum":"2025-06-20T18:50:38","jaar":2025,"plek":"Spanje"},{"groot":"fotos/346-photo-2025-06-20-18-50-38-3.jpg","klein":"fotos/346-photo-2025-06-20-18-50-38-3-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-06-20T18:50:38","jaar":2025,"plek":"Spanje"},{"groot":"fotos/347-photo-2025-06-20-18-50-38.jpg","klein":"fotos/347-photo-2025-06-20-18-50-38-k.jpg","breedte":800,"hoogte":600,"datum":"2025-06-20T18:50:38","jaar":2025,"plek":"Spanje"},{"groot":"fotos/348-photo-2025-06-20-19-06-48.jpg","klein":"fotos/348-photo-2025-06-20-19-06-48-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-06-20T19:06:48","jaar":2025,"plek":"Spanje"},{"groot":"fotos/349-photo-2025-06-20-19-06-49.jpg","klein":"fotos/349-photo-2025-06-20-19-06-49-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-06-20T19:06:49","jaar":2025,"plek":"Spanje"},{"groot":"fotos/350-photo-2025-06-23-22-11-58-2.jpg","klein":"fotos/350-photo-2025-06-23-22-11-58-2-k.jpg","breedte":800,"hoogte":600,"datum":"2025-06-23T22:11:58","jaar":2025,"plek":"Spanje"},{"groot":"fotos/351-photo-2025-06-23-22-11-58.jpg","klein":"fotos/351-photo-2025-06-23-22-11-58-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-06-23T22:11:58","jaar":2025,"plek":"Spanje"},{"groot":"fotos/352-photo-2025-06-23-22-13-47.jpg","klein":"fotos/352-photo-2025-06-23-22-13-47-k.jpg","breedte":800,"hoogte":600,"datum":"2025-06-23T22:13:47","jaar":2025,"plek":"Spanje"},{"groot":"fotos/353-photo-2025-08-27-15-52-55.jpg","klein":"fotos/353-photo-2025-08-27-15-52-55-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-08-27T15:52:55","jaar":2025,"plek":"Uit eten"},{"groot":"fotos/354-photo-2025-08-30-17-42-45.jpg","klein":"fotos/354-photo-2025-08-30-17-42-45-k.jpg","breedte":800,"hoogte":600,"datum":"2025-08-30T17:42:45","jaar":2025,"plek":"Uit eten"},{"groot":"fotos/355-photo-2025-09-07-14-12-09.jpg","klein":"fotos/355-photo-2025-09-07-14-12-09-k.jpg","breedte":800,"hoogte":600,"datum":"2025-09-07T14:12:09","jaar":2025,"plek":"Uit eten"},{"groot":"fotos/356-photo-2025-09-13-13-02-00-2.jpg","klein":"fotos/356-photo-2025-09-13-13-02-00-2-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-09-13T13:02:00","jaar":2025,"plek":"Skipper"},{"groot":"fotos/357-photo-2025-09-13-13-02-00.jpg","klein":"fotos/357-photo-2025-09-13-13-02-00-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-09-13T13:02:00","jaar":2025,"plek":"Skipper"},{"groot":"fotos/358-photo-2025-09-13-13-02-01.jpg","klein":"fotos/358-photo-2025-09-13-13-02-01-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-09-13T13:02:01","jaar":2025,"plek":"Skipper"},{"groot":"fotos/359-photo-2025-10-05-23-06-04-2.jpg","klein":"fotos/359-photo-2025-10-05-23-06-04-2-k.jpg","breedte":800,"hoogte":1066,"datum":"2025-10-05T23:06:04","jaar":2025,"plek":"Onderweg in Nederland"},{"groot":"fotos/360-photo-2025-10-05-23-06-04-3.jpg","klein":"fotos/360-photo-2025-10-05-23-06-04-3-k.jpg","breedte":800,"hoogte":600,"datum":"2025-10-05T23:06:04","jaar":2025,"plek":"Onderweg in Nederland"},{"groot":"fotos/361-photo-2025-10-05-23-06-04.jpg","klein":"fotos/361-photo-2025-10-05-23-06-04-k.jpg","breedte":800,"hoogte":600,"datum":"2025-10-05T23:06:04","jaar":2025,"plek":"Onderweg in Nederland"},{"groot":"fotos/362-photo-2025-11-09-11-58-17.jpg","klein":"fotos/362-photo-2025-11-09-11-58-17-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-11-09T11:58:17","jaar":2025,"plek":"Onderweg in Nederland"},{"groot":"fotos/363-photo-2025-11-22-19-18-45.jpg","klein":"fotos/363-photo-2025-11-22-19-18-45-k.jpg","breedte":800,"hoogte":600,"datum":"2025-11-22T19:18:45","jaar":2025,"plek":"Uit eten"},{"groot":"fotos/364-photo-2025-11-22-20-30-53.jpg","klein":"fotos/364-photo-2025-11-22-20-30-53-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-11-22T20:30:53","jaar":2025,"plek":"Uit eten"},{"groot":"fotos/365-photo-2025-11-27-14-13-50.jpg","klein":"fotos/365-photo-2025-11-27-14-13-50-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-11-27T14:13:50","jaar":2025,"plek":"Skipper"},{"groot":"fotos/366-photo-2025-11-27-14-15-00.jpg","klein":"fotos/366-photo-2025-11-27-14-15-00-k.jpg","breedte":800,"hoogte":1067,"datum":"2025-11-27T14:15:00","jaar":2025,"plek":"Skipper"},{"groot":"fotos/367-photo-2026-01-01-00-27-20.jpg","klein":"fotos/367-photo-2026-01-01-00-27-20-k.jpg","breedte":800,"hoogte":1066,"datum":"2026-01-01T00:27:20","jaar":2026,"plek":"Feesten & mijlpalen"},{"groot":"fotos/368-photo-2026-01-01-00-27-21.jpg","klein":"fotos/368-photo-2026-01-01-00-27-21-k.jpg","breedte":800,"hoogte":1066,"datum":"2026-01-01T00:27:21","jaar":2026,"plek":"Feesten & mijlpalen"},{"groot":"fotos/369-photo-2026-01-01-00-27-33.jpg","klein":"fotos/369-photo-2026-01-01-00-27-33-k.jpg","breedte":800,"hoogte":1066,"datum":"2026-01-01T00:27:33","jaar":2026,"plek":"Feesten & mijlpalen"},{"groot":"fotos/370-photo-2026-01-01-00-28-40.jpg","klein":"fotos/370-photo-2026-01-01-00-28-40-k.jpg","breedte":800,"hoogte":1421,"datum":"2026-01-01T00:28:40","jaar":2026,"plek":"Feesten & mijlpalen"},{"groot":"fotos/371-photo-2026-01-06-11-01-55.jpg","klein":"fotos/371-photo-2026-01-06-11-01-55-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-01-06T11:01:55","jaar":2026,"plek":"Onderweg in Nederland"},{"groot":"fotos/372-photo-2026-01-22-05-43-58.jpg","klein":"fotos/372-photo-2026-01-22-05-43-58-k.jpg","breedte":800,"hoogte":600,"datum":"2026-01-22T05:43:58","jaar":2026,"plek":"Onderweg in Nederland"},{"groot":"fotos/373-photo-2026-01-25-22-20-42.jpg","klein":"fotos/373-photo-2026-01-25-22-20-42-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-01-25T22:20:42","jaar":2026,"plek":"Thuis"},{"groot":"fotos/374-photo-2026-03-22-20-28-52.jpg","klein":"fotos/374-photo-2026-03-22-20-28-52-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-03-22T20:28:52","jaar":2026,"plek":"Feesten & mijlpalen"},{"groot":"fotos/375-photo-2026-04-06-22-51-42.jpg","klein":"fotos/375-photo-2026-04-06-22-51-42-k.jpg","breedte":800,"hoogte":600,"datum":"2026-04-06T22:51:42","jaar":2026,"plek":"Feesten & mijlpalen"},{"groot":"fotos/376-photo-2026-04-11-17-39-42.jpg","klein":"fotos/376-photo-2026-04-11-17-39-42-k.jpg","breedte":800,"hoogte":600,"datum":"2026-04-11T17:39:42","jaar":2026,"plek":"Feesten & mijlpalen"},{"groot":"fotos/377-photo-2026-04-12-17-10-46.jpg","klein":"fotos/377-photo-2026-04-12-17-10-46-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-04-12T17:10:46","jaar":2026,"plek":"Feesten & mijlpalen"},{"groot":"fotos/378-photo-2026-04-12-17-11-26.jpg","klein":"fotos/378-photo-2026-04-12-17-11-26-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-04-12T17:11:26","jaar":2026,"plek":"Feesten & mijlpalen"},{"groot":"fotos/379-photo-2026-04-12-17-11-55.jpg","klein":"fotos/379-photo-2026-04-12-17-11-55-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-04-12T17:11:55","jaar":2026,"plek":"Feesten & mijlpalen"},{"groot":"fotos/380-photo-2026-04-12-17-41-26.jpg","klein":"fotos/380-photo-2026-04-12-17-41-26-k.jpg","breedte":800,"hoogte":600,"datum":"2026-04-12T17:41:26","jaar":2026,"plek":"Feesten & mijlpalen"},{"groot":"fotos/381-photo-2026-04-12-17-41-35.jpg","klein":"fotos/381-photo-2026-04-12-17-41-35-k.jpg","breedte":800,"hoogte":600,"datum":"2026-04-12T17:41:35","jaar":2026,"plek":"Feesten & mijlpalen"},{"groot":"fotos/382-photo-2026-04-12-17-42-11-2.jpg","klein":"fotos/382-photo-2026-04-12-17-42-11-2-k.jpg","breedte":800,"hoogte":600,"datum":"2026-04-12T17:42:11","jaar":2026,"plek":"Feesten & mijlpalen"},{"groot":"fotos/383-photo-2026-04-12-17-42-11.jpg","klein":"fotos/383-photo-2026-04-12-17-42-11-k.jpg","breedte":800,"hoogte":600,"datum":"2026-04-12T17:42:11","jaar":2026,"plek":"Feesten & mijlpalen"},{"groot":"fotos/384-photo-2026-04-12-17-42-13-2.jpg","klein":"fotos/384-photo-2026-04-12-17-42-13-2-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-04-12T17:42:13","jaar":2026,"plek":"Feesten & mijlpalen"},{"groot":"fotos/385-photo-2026-04-12-17-42-13.jpg","klein":"fotos/385-photo-2026-04-12-17-42-13-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-04-12T17:42:13","jaar":2026,"plek":"Feesten & mijlpalen"},{"groot":"fotos/386-photo-2026-04-21-16-13-39.jpg","klein":"fotos/386-photo-2026-04-21-16-13-39-k.jpg","breedte":800,"hoogte":1201,"datum":"2026-04-21T16:13:39","jaar":2026,"plek":"Feesten & mijlpalen"},{"groot":"fotos/387-photo-2026-04-29-14-44-47.jpg","klein":"fotos/387-photo-2026-04-29-14-44-47-k.jpg","breedte":800,"hoogte":1066,"datum":"2026-04-29T14:44:47","jaar":2026,"plek":"Wandelen & buiten"},{"groot":"fotos/388-photo-2026-04-29-17-40-57.jpg","klein":"fotos/388-photo-2026-04-29-17-40-57-k.jpg","breedte":800,"hoogte":600,"datum":"2026-04-29T17:40:57","jaar":2026,"plek":"Onderweg in Nederland"},{"groot":"fotos/389-photo-2026-04-30-18-50-23.jpg","klein":"fotos/389-photo-2026-04-30-18-50-23-k.jpg","breedte":800,"hoogte":1066,"datum":"2026-04-30T18:50:23","jaar":2026,"plek":"Wandelen & buiten"},{"groot":"fotos/390-photo-2026-04-30-18-50-24.jpg","klein":"fotos/390-photo-2026-04-30-18-50-24-k.jpg","breedte":800,"hoogte":600,"datum":"2026-04-30T18:50:24","jaar":2026,"plek":"Wandelen & buiten"},{"groot":"fotos/391-photo-2026-04-30-18-51-26.jpg","klein":"fotos/391-photo-2026-04-30-18-51-26-k.jpg","breedte":800,"hoogte":600,"datum":"2026-04-30T18:51:26","jaar":2026,"plek":"Wandelen & buiten"},{"groot":"fotos/392-photo-2026-04-30-18-52-16.jpg","klein":"fotos/392-photo-2026-04-30-18-52-16-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-04-30T18:52:16","jaar":2026,"plek":"Wandelen & buiten"},{"groot":"fotos/393-photo-2026-04-30-18-52-37.jpg","klein":"fotos/393-photo-2026-04-30-18-52-37-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-04-30T18:52:37","jaar":2026,"plek":"Wandelen & buiten"},{"groot":"fotos/394-photo-2026-05-10-17-46-44.jpg","klein":"fotos/394-photo-2026-05-10-17-46-44-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-05-10T17:46:44","jaar":2026,"plek":"Uit eten"},{"groot":"fotos/395-photo-2026-05-10-17-51-11.jpg","klein":"fotos/395-photo-2026-05-10-17-51-11-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-05-10T17:51:11","jaar":2026,"plek":"Onderweg in Nederland"},{"groot":"fotos/396-photo-2026-05-10-20-31-01.jpg","klein":"fotos/396-photo-2026-05-10-20-31-01-k.jpg","breedte":800,"hoogte":600,"datum":"2026-05-10T20:31:01","jaar":2026,"plek":"Onderweg in Nederland"},{"groot":"fotos/397-photo-2026-06-19-21-37-44.jpg","klein":"fotos/397-photo-2026-06-19-21-37-44-k.jpg","breedte":800,"hoogte":1066,"datum":"2026-06-19T21:37:44","jaar":2026,"plek":"Onderweg in Nederland"},{"groot":"fotos/398-photo-2026-06-24-12-10-01.jpg","klein":"fotos/398-photo-2026-06-24-12-10-01-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-06-24T12:10:01","jaar":2026,"plek":"Portugal"},{"groot":"fotos/399-photo-2026-06-25-16-12-05.jpg","klein":"fotos/399-photo-2026-06-25-16-12-05-k.jpg","breedte":800,"hoogte":1066,"datum":"2026-06-25T16:12:05","jaar":2026,"plek":"Portugal"},{"groot":"fotos/400-photo-2026-06-25-21-27-06.jpg","klein":"fotos/400-photo-2026-06-25-21-27-06-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-06-25T21:27:06","jaar":2026,"plek":"Portugal"},{"groot":"fotos/401-photo-2026-06-30-19-09-58-2.jpg","klein":"fotos/401-photo-2026-06-30-19-09-58-2-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-06-30T19:09:58","jaar":2026,"plek":"Portugal"},{"groot":"fotos/402-photo-2026-06-30-19-09-58.jpg","klein":"fotos/402-photo-2026-06-30-19-09-58-k.jpg","breedte":800,"hoogte":600,"datum":"2026-06-30T19:09:58","jaar":2026,"plek":"Portugal"},{"groot":"fotos/403-photo-2026-06-30-19-09-59.jpg","klein":"fotos/403-photo-2026-06-30-19-09-59-k.jpg","breedte":800,"hoogte":600,"datum":"2026-06-30T19:09:59","jaar":2026,"plek":"Portugal"},{"groot":"fotos/404-photo-2026-07-01-17-24-19-2.jpg","klein":"fotos/404-photo-2026-07-01-17-24-19-2-k.jpg","breedte":800,"hoogte":1066,"datum":"2026-07-01T17:24:19","jaar":2026,"plek":"Portugal"},{"groot":"fotos/405-photo-2026-07-01-17-24-19-3.jpg","klein":"fotos/405-photo-2026-07-01-17-24-19-3-k.jpg","breedte":800,"hoogte":1066,"datum":"2026-07-01T17:24:19","jaar":2026,"plek":"Portugal"},{"groot":"fotos/406-photo-2026-07-01-17-24-19.jpg","klein":"fotos/406-photo-2026-07-01-17-24-19-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-07-01T17:24:19","jaar":2026,"plek":"Portugal"},{"groot":"fotos/407-photo-2026-07-03-13-35-24.jpg","klein":"fotos/407-photo-2026-07-03-13-35-24-k.jpg","breedte":800,"hoogte":1066,"datum":"2026-07-03T13:35:24","jaar":2026,"plek":"Portugal"},{"groot":"fotos/408-photo-2026-07-03-13-35-40.jpg","klein":"fotos/408-photo-2026-07-03-13-35-40-k.jpg","breedte":800,"hoogte":1066,"datum":"2026-07-03T13:35:40","jaar":2026,"plek":"Portugal"},{"groot":"fotos/409-photo-2026-07-26-15-17-19-2.jpg","klein":"fotos/409-photo-2026-07-26-15-17-19-2-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-07-26T15:17:19","jaar":2026,"plek":"Onderweg in Nederland"},{"groot":"fotos/410-photo-2026-07-26-15-17-19.jpg","klein":"fotos/410-photo-2026-07-26-15-17-19-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-07-26T15:17:19","jaar":2026,"plek":"Onderweg in Nederland"},{"groot":"fotos/411-photo-2026-07-26-15-20-07.jpg","klein":"fotos/411-photo-2026-07-26-15-20-07-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-07-26T15:20:07","jaar":2026,"plek":"Onderweg in Nederland"},{"groot":"fotos/412-photo-2026-07-28-17-07-53.jpg","klein":"fotos/412-photo-2026-07-28-17-07-53-k.jpg","breedte":800,"hoogte":1066,"datum":"2026-07-28T17:07:53","jaar":2026,"plek":"Onderweg in Nederland"},{"groot":"fotos/413-photo-2026-08-09-19-12-40.jpg","klein":"fotos/413-photo-2026-08-09-19-12-40-k.jpg","breedte":800,"hoogte":600,"datum":"2026-08-09T19:12:40","jaar":2026,"plek":"Uit eten"},{"groot":"fotos/414-photo-2026-08-23-14-50-01.jpg","klein":"fotos/414-photo-2026-08-23-14-50-01-k.jpg","breedte":800,"hoogte":1422,"datum":"2026-08-23T14:50:01","jaar":2026,"plek":"Onderweg in Nederland"},{"groot":"fotos/415-photo-2026-08-27-00-08-56.jpg","klein":"fotos/415-photo-2026-08-27-00-08-56-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-08-27T00:08:56","jaar":2026,"plek":"Amerika"},{"groot":"fotos/416-photo-2026-08-27-00-08-57-2.jpg","klein":"fotos/416-photo-2026-08-27-00-08-57-2-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-08-27T00:08:57","jaar":2026,"plek":"Amerika"},{"groot":"fotos/417-photo-2026-08-27-00-08-57.jpg","klein":"fotos/417-photo-2026-08-27-00-08-57-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-08-27T00:08:57","jaar":2026,"plek":"Amerika"},{"groot":"fotos/418-photo-2026-08-27-20-01-05.jpg","klein":"fotos/418-photo-2026-08-27-20-01-05-k.jpg","breedte":800,"hoogte":1067,"datum":"2026-08-27T20:01:05","jaar":2026,"plek":"Onderweg in Nederland"},{"groot":"fotos/419-e7c39790-0753-4a6c-9423-caa18fae3b6d.jpg","klein":"fotos/419-e7c39790-0753-4a6c-9423-caa18fae3b6d-k.jpg","breedte":800,"hoogte":1422,"datum":"2026-09-05T22:06:32","jaar":2026,"plek":"Skipper"}];
+const SLEUTEL = ["Skipper", "skippertje"];
+const OPENING = "Gefeliciteerd met je 60e verjaardag.\nIk heb wat foto's uitgezocht voor een album van de afgelopen tijd en er een fotoboek van gemaakt.\nIk hoop dat je ervan geniet!";
+const WEGWIJZER = "Met de knoppen hieronder wissel je tussen de jaren en de plekken.";
+const LEEFTIJDEN = {"2015": "negenenveertig", "2016": "vijftig", "2017": "eenenvijftig", "2018": "tweeënvijftig", "2019": "drieënvijftig", "2020": "vierenvijftig", "2021": "vijfenvijftig", "2022": "zesenvijftig", "2023": "zevenenvijftig", "2024": "achtenvijftig", "2025": "negenenvijftig", "2026": "zestig"};
+
+const MAANDEN = ["januari","februari","maart","april","mei","juni",
+                 "juli","augustus","september","oktober","november","december"];
+function mooieDatum(iso){
+  const d = new Date(iso);
+  return d.getDate() + " " + MAANDEN[d.getMonth()] + " " + d.getFullYear();
+}
+const RUSTIG = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const KLEUREN = ["#c9a227","#e8c95e","#efe6d2","#c98b7a","#f2efe9"];
+
+/* ---------- kaarsjes op de taart ---------- */
+(function kaarsjes(){
+  const g = document.getElementById("kaarsjes");
+  if(!g) return;
+  const xen = [58, 79, 100, 121, 142];
+  g.innerHTML = xen.map((x,i)=>`
+    <g style="--i:${i}">
+      <rect x="${x-2}" y="40" width="4" height="27" rx="1.6" fill="#efe6d2"/>
+      <rect x="${x-2}" y="46" width="4" height="3.4" fill="#c98b7a" opacity=".8"/>
+      <rect x="${x-2}" y="55" width="4" height="3.4" fill="#c98b7a" opacity=".8"/>
+      <line x1="${x}" y1="40" x2="${x}" y2="34" stroke="#7a6a4a" stroke-width="1.1"/>
+      <ellipse class="gloed" cx="${x}" cy="29" rx="5" ry="6.5" fill="#c9a227" opacity=".22"/>
+      <path class="vlam" d="M${x} 19 q3.5 6 3.5 10 a3.5 3.5 0 0 1 -7 0 q0 -4 3.5 -10 z" fill="#e8c95e"/>
+      <path class="vlam" d="M${x} 25 q1.7 2.9 1.7 4.8 a1.7 1.7 0 0 1 -3.4 0 q0 -2 1.7 -4.8 z" fill="#fff6da"/>
+      <path class="rook" d="M${x} 20 q3 -5 0 -9 q-3 -5 0 -9" stroke="#a8a29a" stroke-width="1.3"
+            fill="none" stroke-linecap="round"/>
+    </g>`).join("");
+})();
+
+/* ---------- slingers ---------- */
+function slingerSVG(breed, hoog, aantal, vlagH){
+  const zak = hoog * 0.55;
+  const pad = `M0 2 Q${breed/2} ${zak+2} ${breed} 2`;
+  let vlaggen = "";
+  for(let i=0;i<aantal;i++){
+    const t = (i + 0.5) / aantal;
+    const x = t * breed;
+    // hoogte op de doorhangende lijn (kwadratische bezier)
+    const y = 2*(1-t)*(1-t) + 2*(1-t)*t*(zak+2) + t*t*2;
+    const kleur = KLEUREN[i % KLEUREN.length];
+    const hoek = (t - 0.5) * 26;
+    vlaggen += `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${hoek.toFixed(1)})"
+        class="vlag" style="--i:${i}">
+        <path d="M${-vlagH*0.34} 0 L${vlagH*0.34} 0 L0 ${vlagH} z" fill="${kleur}"/>
+      </g>`;
+  }
+  return `<svg viewBox="0 0 ${breed} ${hoog}" preserveAspectRatio="none" aria-hidden="true">
+    <path d="${pad}" stroke="#6f6a63" stroke-width="1.2" fill="none"/>${vlaggen}</svg>`;
+}
+function zetSlinger(el, hoog, aantal, vlagH){
+  if(!el) return;
+  const breed = Math.max(el.clientWidth || window.innerWidth, 240);
+  el.innerHTML = slingerSVG(breed, hoog, aantal, vlagH);
+}
+zetSlinger(document.getElementById("slinger-boven"), 44, 14, 22);
+zetSlinger(document.getElementById("slingertje"), 34, 9, 18);
+addEventListener("resize", ()=>{
+  zetSlinger(document.getElementById("slinger-boven"), 44, 14, 22);
+  zetSlinger(document.getElementById("slingertje"), 34, 9, 18);
+});
+
+/* ---------- confetti ---------- */
+const doek = document.getElementById("confetti");
+const stift = doek.getContext("2d");
+let snippers = [], loopt = false;
+
+function strooi(aantal, kracht){
+  if(RUSTIG) return;
+  doek.width = innerWidth; doek.height = innerHeight;
+  doek.classList.add("aan");
+  for(let i=0;i<aantal;i++){
+    snippers.push({
+      x: innerWidth * (0.15 + Math.random()*0.7),
+      y: -20 - Math.random()*innerHeight*0.35,
+      vx: (Math.random()-0.5) * 2.4,
+      vy: 1.4 + Math.random() * kracht,
+      b: 6 + Math.random()*7,
+      h: 9 + Math.random()*9,
+      hoek: Math.random()*Math.PI*2,
+      draai: (Math.random()-0.5) * 0.19,
+      kleur: KLEUREN[(Math.random()*KLEUREN.length)|0],
+      isZestig: Math.random() < 0.22,
+      leven: 1
+    });
+  }
+  if(!loopt){ loopt = true; requestAnimationFrame(teken); }
+}
+function teken(){
+  stift.clearRect(0,0,doek.width,doek.height);
+  snippers = snippers.filter(s => s.leven > 0 && s.y < doek.height + 60);
+  for(const s of snippers){
+    s.x += s.vx; s.y += s.vy; s.vy += 0.045; s.vx *= 0.995; s.hoek += s.draai;
+    if(s.y > doek.height * 0.72) s.leven -= 0.014;
+    stift.save();
+    stift.translate(s.x, s.y); stift.rotate(s.hoek);
+    stift.globalAlpha = Math.max(0, s.leven);
+    if(s.isZestig){
+      stift.fillStyle = s.kleur;
+      stift.font = "600 " + (s.h + 5) + "px Georgia, serif";
+      stift.textAlign = "center"; stift.textBaseline = "middle";
+      stift.fillText("60", 0, 0);
+    } else {
+      stift.fillStyle = s.kleur;
+      stift.fillRect(-s.b/2, -s.h/2, s.b, s.h);
+    }
+    stift.restore();
+  }
+  if(snippers.length){ requestAnimationFrame(teken); }
+  else { loopt = false; doek.classList.remove("aan"); stift.clearRect(0,0,doek.width,doek.height); }
+}
+
+/* ---------- omslag ---------- */
+const omslag = document.getElementById("omslag");
+const album  = document.getElementById("album");
+const mis    = document.getElementById("mis");
+const taart  = document.getElementById("taart");
+const omslagfoto = omslag.dataset.foto;
+if (omslagfoto){
+  omslag.style.setProperty("--omslagfoto", `url("${omslagfoto}")`);
+  omslag.classList.add("metfoto");
+}
+
+function openMaken(){
+  taart.classList.add("uit");
+  strooi(150, 3.2);
+  setTimeout(()=>{
+    omslag.classList.add("weg");
+    album.classList.add("open");
+    album.setAttribute("aria-hidden","false");
+  }, RUSTIG ? 0 : 750);
+  try{ sessionStorage.setItem("open","ja"); }catch(e){}
+  setTimeout(()=>{ omslag.style.display="none"; }, RUSTIG ? 100 : 1800);
+  if(!RUSTIG) setTimeout(()=>{
+    const k = document.querySelector(".knoppen");
+    k.classList.add("wenk");
+    setTimeout(()=> k.classList.remove("wenk"), 5000);
+  }, 2200);
+}
+function misgeraden(){
+  mis.classList.add("zien");
+  taart.classList.add("blazen");
+  setTimeout(()=> taart.classList.remove("blazen"), 550);
+  setTimeout(()=> mis.classList.remove("zien"), 2600);
+}
+function probeer(){
+  const gegeven = document.getElementById("antwoord").value.trim().toLowerCase();
+  if (SLEUTEL.some(s => gegeven === String(s).toLowerCase())) openMaken();
+  else misgeraden();
+}
+document.getElementById("sleutelform").addEventListener("submit", e=>{ e.preventDefault(); probeer(); });
+document.getElementById("antwoord").addEventListener("keydown", e=>{
+  if(e.key === "Enter"){ e.preventDefault(); probeer(); }
+});
+try{
+  if (sessionStorage.getItem("open")==="ja"){
+    omslag.style.display="none"; taart.classList.add("uit");
+    album.classList.add("open"); album.setAttribute("aria-hidden","false");
+  }
+}catch(e){}
+
+/* ---------- opening ---------- */
+const opening = document.getElementById("opening");
+OPENING.split("\n").filter(r=>r.trim()).forEach(r=>{
+  const p = document.createElement("p"); p.textContent = r; opening.appendChild(p);
+});
+if (WEGWIJZER){
+  const w = document.createElement("p"); w.className = "wegwijzer";
+  w.textContent = WEGWIJZER; opening.appendChild(w);
+}
+
+/* ---------- klein tekentje per jaar, elk jaar een ander ---------- */
+const G = "#c9a227", GL = "#e8c95e", R = "#c98b7a", C = "#efe6d2";
+const TEKENS = [
+  // ballon
+  `<g class="a-zweven"><path d="M12 14.6 v4.4" stroke="${G}" stroke-width="1" fill="none"/>
+   <ellipse cx="12" cy="8.6" rx="5.2" ry="6.3" fill="${R}"/>
+   <ellipse cx="10.2" cy="6.4" rx="1.5" ry="2" fill="${C}" opacity=".45"/>
+   <path d="M10.6 14.5 h2.8 l-1.4 1.7 z" fill="${R}"/></g>`,
+  // confetti
+  `<g><rect class="a-dalen" style="--i:0" x="5" y="6" width="3.6" height="5" rx=".8" fill="${G}"/>
+   <rect class="a-dalen" style="--i:1" x="10.4" y="4" width="3.6" height="5" rx=".8" fill="${C}"/>
+   <rect class="a-dalen" style="--i:2" x="15.6" y="7" width="3.6" height="5" rx=".8" fill="${R}"/></g>`,
+  // ster
+  `<g class="a-fonkelen"><path d="M12 3 l2.5 6.1 6.5.5 -5 4.2 1.6 6.3 -5.6-3.5 -5.6 3.5 1.6-6.3 -5-4.2 6.5-.5 z"
+   fill="${GL}"/></g>`,
+  // kroontje
+  `<g class="a-zweven"><path d="M4.4 17.6 L6 8 L9.4 12 L12 5.6 L14.6 12 L18 8 L19.6 17.6 z" fill="${GL}"/>
+   <rect x="4.2" y="17.6" width="15.6" height="2.4" rx=".8" fill="${G}"/>
+   <circle cx="12" cy="4.4" r="1.5" fill="${R}"/></g>`,
+  // kaarsje
+  `<g><rect x="10.2" y="10" width="3.6" height="10" rx="1" fill="${C}"/>
+   <rect x="10.2" y="13" width="3.6" height="1.6" fill="${R}" opacity=".8"/>
+   <g class="a-fonkelen"><path d="M12 3.4 q2.4 3.6 2.4 5.6 a2.4 2.4 0 0 1 -4.8 0 q0 -2 2.4 -5.6 z"
+   fill="${GL}"/></g></g>`,
+  // hartje
+  `<g class="a-kloppen"><path d="M12 20 C5 15 3 11 3 8.4 A4.6 4.6 0 0 1 12 6.6
+   A4.6 4.6 0 0 1 21 8.4 C21 11 19 15 12 20 z" fill="${R}"/></g>`,
+  // slierten
+  `<g class="a-wuiven"><path d="M3 8 q3 -4.4 6 0 t6 0 t6 0" stroke="${R}" stroke-width="2"
+   fill="none" stroke-linecap="round"/>
+   <path d="M3 15.5 q3 -4.4 6 0 t6 0 t6 0" stroke="${GL}" stroke-width="2"
+   fill="none" stroke-linecap="round"/></g>`,
+  // vonkje
+  `<g class="a-fonkelen"><g stroke="${GL}" stroke-width="1.5" stroke-linecap="round">
+   <line x1="12" y1="3" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="21"/>
+   <line x1="3" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="21" y2="12"/>
+   <line x1="5.9" y1="5.9" x2="9" y2="9"/><line x1="15" y1="15" x2="18.1" y2="18.1"/>
+   <line x1="18.1" y1="5.9" x2="15" y2="9"/><line x1="9" y1="15" x2="5.9" y2="18.1"/></g></g>`,
+  // glaasje met belletjes
+  `<g><circle class="a-stijgen" style="--i:0" cx="10.6" cy="9" r="1" fill="${C}"/>
+   <circle class="a-stijgen" style="--i:1" cx="13.4" cy="7.5" r=".9" fill="${C}"/>
+   <path d="M8 4 h8 l-1.4 7.2 a2.6 2.6 0 0 1 -5.2 0 z" fill="${GL}" opacity=".85"/>
+   <line x1="12" y1="14" x2="12" y2="19.4" stroke="${G}" stroke-width="1.2"/>
+   <line x1="8.6" y1="20" x2="15.4" y2="20" stroke="${G}" stroke-width="1.2" stroke-linecap="round"/></g>`,
+  // taartpunt
+  `<g class="a-wiebelen"><path d="M12 5 L20.5 18 H3.5 z" fill="${C}"/>
+   <path d="M12 5 L15.6 10.6 H8.4 z" fill="${R}"/>
+   <circle cx="12" cy="4" r="1.5" fill="${GL}"/></g>`,
+  // cadeautje
+  `<g class="a-wiebelen"><rect x="4" y="9.5" width="16" height="10.5" rx="1.2" fill="${C}"/>
+   <rect x="10.4" y="9.5" width="3.2" height="10.5" fill="${R}"/>
+   <rect x="3" y="6.6" width="18" height="3.4" rx="1" fill="${GL}"/>
+   <path d="M12 6.6 q-4-4.6 -1.2-4.6 q1.6 0 1.2 4.6 q.4-4.6 2-4.6 q2.8 0 -2 4.6"
+   fill="${R}"/></g>`,
+  // de zestig zelf
+  `<g class="a-ademen"><text x="12" y="17" text-anchor="middle"
+   font-family="Georgia,serif" font-size="15" font-weight="600" fill="${GL}">60</text></g>`,
+];
+function tekenSVG(i){
+  return `<svg viewBox="0 0 24 24" aria-hidden="true">${TEKENS[i % TEKENS.length]}</svg>`;
+}
+
+/* ---------- raster ---------- */
+const inhoud = document.getElementById("inhoud");
+let volgorde = [];
+
+function bouwGroepen(sleutelfn, sorteer){
+  const kaart = new Map();
+  FOTOS.forEach(f => {
+    const k = sleutelfn(f);
+    if (!kaart.has(k)) kaart.set(k, []);
+    kaart.get(k).push(f);
+  });
+  return sorteer([...kaart.entries()]);
+}
+
+function toon(modus){
+  const groepen = modus === "jaar"
+    ? bouwGroepen(f => String(f.jaar), g => g.sort((a,b)=>a[0].localeCompare(b[0])))
+    : bouwGroepen(f => f.plek, g => g.sort((a,b)=>b[1].length - a[1].length));
+
+  inhoud.innerHTML = "";
+  volgorde = [];
+  secties = [];
+
+  groepen.forEach(([titel, lijst], index) => {
+    lijst.sort((a,b)=> a.datum.localeCompare(b.datum));
+    const sectie = document.createElement("section");
+    sectie.className = "hoofdstuk";
+
+    const kop = document.createElement("div");
+    kop.className = "kop";
+    const h2 = document.createElement("h2");
+    h2.textContent = titel;
+    let teken = null;
+    if (modus === "jaar" && !RUSTIG){
+      teken = document.createElement("span");
+      teken.className = "teken";
+      teken.innerHTML = tekenSVG(index);
+    }
+    const vlaggen = document.createElement("span");
+    vlaggen.className = "vlaggen";
+    const telling = document.createElement("span");
+    telling.className = "telling";
+    const aantal = lijst.length + (lijst.length === 1 ? " foto" : " foto’s");
+    const leeftijd = modus === "jaar" ? LEEFTIJDEN[titel] : null;
+    if (leeftijd){
+      telling.innerHTML = '<span class="leeftijd"></span> · ' + aantal;
+      telling.querySelector(".leeftijd").textContent = leeftijd;
+    } else {
+      telling.textContent = aantal;
+    }
+    if (teken) kop.append(h2, teken, vlaggen, telling);
+    else kop.append(h2, vlaggen, telling);
+    sectie.appendChild(kop);
+
+    const raster = document.createElement("div");
+    raster.className = "raster";
+    lijst.forEach(f => {
+      const i = volgorde.length;
+      volgorde.push(f);
+      const kaart = document.createElement("figure");
+      kaart.className = "kaart";
+      const img = document.createElement("img");
+      img.src = f.klein; img.loading = "lazy"; img.decoding = "async";
+      img.width = f.breedte; img.height = f.hoogte;
+      img.alt = titel + ", " + mooieDatum(f.datum);
+      img.addEventListener("load", ()=> img.classList.add("geladen"));
+      if (img.complete) img.classList.add("geladen");
+      const datum = document.createElement("figcaption");
+      datum.className = "datum"; datum.textContent = mooieDatum(f.datum);
+      kaart.append(img, datum);
+      kaart.addEventListener("click", ()=> openLichtbak(i));
+      raster.appendChild(kaart);
+    });
+    sectie.appendChild(raster);
+    inhoud.appendChild(sectie);
+    zetSlinger(vlaggen, 26, Math.max(3, Math.round(vlaggen.clientWidth / 46)), 13);
+    secties.push({titel, element: sectie});
+  });
+  vulSprong();
+}
+
+/* ---------- springen naar een hoofdstuk ---------- */
+let secties = [];
+const sprong = document.getElementById("sprong");
+function vulSprong(){
+  sprong.innerHTML = "";
+  secties.forEach(s => {
+    const knop = document.createElement("button");
+    knop.textContent = s.titel;
+    knop.addEventListener("click", ()=> s.element.scrollIntoView({behavior:"smooth", block:"start"}));
+    sprong.appendChild(knop);
+  });
+  volgSprong();
+}
+let volger = null;
+function volgSprong(){
+  if (volger) volger.disconnect();
+  volger = new IntersectionObserver(waarnemingen=>{
+    waarnemingen.forEach(w=>{
+      if (!w.isIntersecting) return;
+      const i = secties.findIndex(s => s.element === w.target);
+      [...sprong.children].forEach((k,j)=> k.classList.toggle("hier", j === i));
+      const knop = sprong.children[i];
+      if (knop) knop.scrollIntoView({block:"nearest", inline:"nearest", behavior:"smooth"});
+    });
+  }, {rootMargin:"-110px 0px -70% 0px"});
+  secties.forEach(s => volger.observe(s.element));
+}
+
+const knopJaar = document.getElementById("knop-jaar");
+const knopPlek = document.getElementById("knop-plek");
+function naarBalk(){ window.scrollTo({top:document.querySelector(".balk").offsetTop, behavior:"smooth"}); }
+knopJaar.addEventListener("click", ()=>{
+  knopJaar.classList.add("aan"); knopPlek.classList.remove("aan"); toon("jaar"); naarBalk();
+});
+knopPlek.addEventListener("click", ()=>{
+  knopPlek.classList.add("aan"); knopJaar.classList.remove("aan"); toon("plek"); naarBalk();
+});
+toon("jaar");
+
+/* ---------- confetti bij het slot ---------- */
+let slotGehad = false;
+new IntersectionObserver((waarnemingen)=>{
+  waarnemingen.forEach(w=>{
+    if(w.isIntersecting && !slotGehad){ slotGehad = true; strooi(70, 2.2); }
+  });
+}, {threshold:.5}).observe(document.getElementById("slot"));
+
+/* ---------- lichtbak ---------- */
+const lichtbak = document.getElementById("lichtbak");
+const lbFoto = document.getElementById("lb-foto");
+const lbInfo = document.getElementById("lb-info");
+let hier = 0;
+
+function openLichtbak(i){
+  hier = i; laadLichtbak();
+  lichtbak.classList.add("aan");
+  document.body.style.overflow = "hidden";
+}
+function laadLichtbak(){
+  const f = volgorde[hier];
+  lbFoto.src = f.groot;
+  lbFoto.alt = f.plek + ", " + mooieDatum(f.datum);
+  lbInfo.textContent = mooieDatum(f.datum) + "  ·  " + f.plek
+                     + "  ·  " + (hier+1) + " / " + volgorde.length;
+  [1,2].forEach(s => { const n = volgorde[hier+s]; if(n){ const p = new Image(); p.src = n.groot; } });
+}
+function stap(d){ hier = (hier + d + volgorde.length) % volgorde.length; laadLichtbak(); }
+function dicht(){ lichtbak.classList.remove("aan"); document.body.style.overflow = ""; }
+
+document.getElementById("lb-dicht").addEventListener("click", dicht);
+document.getElementById("lb-vorige").addEventListener("click", e=>{ e.stopPropagation(); stap(-1); });
+document.getElementById("lb-volgende").addEventListener("click", e=>{ e.stopPropagation(); stap(1); });
+lichtbak.addEventListener("click", e=>{ if(e.target === lichtbak || e.target === lbFoto) dicht(); });
+document.addEventListener("keydown", e=>{
+  if(!lichtbak.classList.contains("aan")) return;
+  if(e.key === "Escape") dicht();
+  else if(e.key === "ArrowLeft") stap(-1);
+  else if(e.key === "ArrowRight") stap(1);
+});
+let raakX = null, raakY = null;
+lichtbak.addEventListener("touchstart", e=>{ raakX = e.touches[0].clientX; raakY = e.touches[0].clientY; }, {passive:true});
+lichtbak.addEventListener("touchend", e=>{
+  if(raakX === null) return;
+  const dx = e.changedTouches[0].clientX - raakX;
+  const dy = e.changedTouches[0].clientY - raakY;
+  if(Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) stap(dx < 0 ? 1 : -1);
+  else if(dy > 90) dicht();
+  raakX = raakY = null;
+}, {passive:true});
+</script>
+</body>
+</html>
